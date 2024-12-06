@@ -25,7 +25,6 @@ code breaker has 10 attemps
 - Game:
     State:
     - code pattern
-    - number of attempt player made
     - (score)
 
     Method:
@@ -34,9 +33,12 @@ code breaker has 10 attemps
 
 - Game Interface
     Method:
-    - displays the game and user attempts
+    - view the history of guesses and their feedback
+    - view the number of guesses remaining is displayed
 
 - Player: contains the attemps player make
+    - number of attempt player made
+
     Method:
     - make guess
 
