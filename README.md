@@ -19,12 +19,15 @@ code breaker has 10 attemps
 
 ## Getting Started
 ### How to run the code
+### install
+- pytest
+- requests
 
 ### Thought process
 1. List all of class we might need
 - Game:
     State:
-    - code pattern
+    - code pattern (Duplicate numbers are allowed)
     - (score)
 
     Method:
