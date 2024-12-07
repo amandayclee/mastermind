@@ -1,8 +1,11 @@
+from datetime import time
 import requests
 from models.feedback import Feedback
+from config.game_config import GameConfig
 
 class Game:
     def __init__(self):
+        self.config = GameConfig()
         self.can_keep_play = True
         self.pattern_count = {}
         self.code_pattern = self._generate_code_pattern()
@@ -10,25 +13,25 @@ class Game:
         self.all_guess_and_feedback = []
         
     def _generate_code_pattern(self):
-        num = '4'
-        min = '0'
-        max = '7'
-        base = '10'
-        format = 'plain'
-        col = '4'
-        rnd = 'new'
-        api_link = f"https://www.random.org/integers/?num={num}&min={min}&max={max}&col={col}&base={base}&format={format}&rnd={rnd}"
+        while True:
+            try:
+                api_params = self.config.get_api_params()
+                api_link = self.config.api_base_url + "?" + "&".join(f"{key}={value}" for key, value in api_params.items())
+                
+                response = requests.get(api_link)
+                response.raise_for_status()
+                code_pattern = [int(_) for _ in response.text.strip("\n").split("\t")]
+                self._calculate_pattern_counts(code_pattern)
+                return code_pattern
+            
+            except requests.exceptions.RequestException as e:
+                print(f"{e}, API request failed.")
         
-        # TODO handle response error
-        response = requests.get(api_link)
-        code_pattern = [int(_) for _ in response.text.strip("\n").split("\t")]
-        
+    def _calculate_pattern_counts(self, code_pattern):
         for num in code_pattern:
             self.pattern_count[num] = self.pattern_count.get(num, 0) + 1
         
         print(self.pattern_count)
-        
-        return code_pattern
               
     def give_feedback_per_round(self, guess):
         correct_number = self.check_number(guess)
