@@ -1,4 +1,4 @@
-from src.interface.game_interface import GameInterface
+from interface.game_interface import GameInterface
 
 game_interface = GameInterface()
 player = game_interface.create_player()

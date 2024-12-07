@@ -22,7 +22,7 @@ code breaker has 10 attemps
 
 1. Clone the repositor
 ```
-git clone [your-repo-url]
+git clone https://github.com/amandayclee/mastermind.git
 cd mastermind
 ```
 

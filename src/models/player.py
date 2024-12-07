@@ -1,4 +1,4 @@
-from src.models.game import Game
+from models.game import Game
 
 
 class Player:

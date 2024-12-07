@@ -1,7 +1,5 @@
 import requests
-from src.models.guess import Guess
-from src.models.feedback import Feedback
-from datetime import datetime
+from models.feedback import Feedback
 
 class Game:
     def __init__(self):
@@ -23,7 +21,7 @@ class Game:
         
         # TODO handle response error
         response = requests.get(api_link)
-        code_pattern = response.text.strip("\n").split("\t")
+        code_pattern = [int(_) for _ in response.text.strip("\n").split("\t")]
         
         for num in code_pattern:
             self.pattern_count[num] = self.pattern_count.get(num, 0) + 1
