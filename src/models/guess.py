@@ -3,8 +3,5 @@ class Guess:
         self.guess_array = [_ for _ in guess_string]
         self.timestamp = timestamp
         
-    def display(self):
-        temp = []
-        for num in self.guess_array:
-            temp.append(num)
-        print(" ".join(temp), end = '')
+    def get_guess(self):
+        return self.guess_array

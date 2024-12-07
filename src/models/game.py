@@ -21,6 +21,7 @@ class Game:
         rnd = 'new'
         api_link = f"https://www.random.org/integers/?num={num}&min={min}&max={max}&col={col}&base={base}&format={format}&rnd={rnd}"
         
+        # TODO handle response error
         response = requests.get(api_link)
         code_pattern = response.text.strip("\n").split("\t")
         
@@ -30,16 +31,15 @@ class Game:
         print(self.pattern_count)
         
         return code_pattern
-            
-        
-    def give_feedback_per_round(self, guess_string):
-        player_guess = Guess(guess_string, datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
-        correct_number = self.check_number(player_guess)
-        correct_location = self.check_location(player_guess)
+              
+    # TODO change guess_string from a string to a Guess object so that you can do error
+    # handling inside of the interface.
+    def give_feedback_per_round(self, guess):
+        correct_number = self.check_number(guess)
+        correct_location = self.check_location(guess)
         feedback = Feedback(correct_number, correct_location)
-        self.all_guess_and_feedback.append((player_guess, feedback))
+        self.all_guess_and_feedback.append((guess, feedback))
         self.guess_time += 1
-        feedback.display()
         self.can_keep_play = self.check_game(correct_number, correct_location)
         
     def check_game(self, correct_number, correct_location):
@@ -50,7 +50,7 @@ class Game:
             return True
         
     def check_number(self, player_guess):
-        player_guess = player_guess.guess_array
+        player_guess = player_guess.get_guess()
         correct_number = 0
         pattern_count_copy = self.pattern_count.copy()
         
@@ -62,7 +62,7 @@ class Game:
         return correct_number
     
     def check_location(self, player_guess):
-        player_guess = player_guess.guess_array
+        player_guess = player_guess.get_guess()
         correct_location = 0
         
         for i in range(len(player_guess)):
