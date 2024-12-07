@@ -32,8 +32,6 @@ class Game:
         
         return code_pattern
               
-    # TODO change guess_string from a string to a Guess object so that you can do error
-    # handling inside of the interface.
     def give_feedback_per_round(self, guess):
         correct_number = self.check_number(guess)
         correct_location = self.check_location(guess)

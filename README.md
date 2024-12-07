@@ -19,9 +19,23 @@ code breaker has 10 attemps
 
 ## Getting Started
 ### How to run the code
-### install
-- pytest
-- requests
+
+1. Clone the repositor
+```
+git clone [your-repo-url]
+cd mastermind
+```
+
+2. Install Hatch if you haven't
+```
+pip install hatch
+```
+
+3. Create environment and run
+```
+hatch env create
+hatch run python src/main.py
+```
 
 ### Thought process
 1. Think about the userflow
