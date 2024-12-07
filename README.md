@@ -35,9 +35,11 @@ code breaker has 10 attemps
     - State:
         - code pattern (Duplicate numbers are allowed)
         - (score)
+        - all guess and feedback
 
     - Method:
-        - check  guess and give feedback
+        - make a guess
+        - check guess and give feedback
         - calculate scores
 
 - Game Interface
@@ -48,12 +50,10 @@ code breaker has 10 attemps
 
 - Player: contains the attemps player make
     - State:
-        - all_guess
-        - all_feedback
-        - number of attempt player made
+        - game_history
 
     Method:
-        - make guess
+        - start a game
 
 - Guess: each guess player makes
     State:

@@ -1,13 +1,17 @@
 import requests
-from src.models import Feedback
+from src.models.guess import Guess
+from src.models.feedback import Feedback
+from datetime import datetime
 
 class Game:
-    def __init__(self, player):
-        self.player = player
-        self.code_pattern = Game.__generate_code_pattern()
-       
-    @staticmethod 
-    def __generate_code_pattern():
+    def __init__(self):
+        self.can_keep_play = True
+        self.pattern_count = {}
+        self.code_pattern = self._generate_code_pattern()
+        self.guess_time = 0
+        self.all_guess_and_feedback = []
+        
+    def _generate_code_pattern(self):
         num = '4'
         min = '0'
         max = '7'
@@ -20,26 +24,45 @@ class Game:
         response = requests.get(api_link)
         code_pattern = response.text.strip("\n").split("\t")
         
-        return code_pattern
+        for num in code_pattern:
+            self.pattern_count[num] = self.pattern_count.get(num, 0) + 1
         
-    def give_feedback_per_round(self, player_guess):
+        print(self.pattern_count)
+        
+        return code_pattern
+            
+        
+    def give_feedback_per_round(self, guess_string):
+        player_guess = Guess(guess_string, datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
         correct_number = self.check_number(player_guess)
         correct_location = self.check_location(player_guess)
         feedback = Feedback(correct_number, correct_location)
-        self.player.receive_a_feedback(feedback)
+        self.all_guess_and_feedback.append((player_guess, feedback))
+        self.guess_time += 1
+        feedback.display()
+        self.can_keep_play = self.check_game(correct_number, correct_location)
         
-        return (f"{correct_number} correct number and {correct_location} correction location")
+    def check_game(self, correct_number, correct_location):
+        if (correct_number == len(self.code_pattern) and correct_location == len(self.code_pattern)) or \
+            self.guess_time == 10:
+            return False
+        else:
+            return True
         
     def check_number(self, player_guess):
+        player_guess = player_guess.guess_array
         correct_number = 0
+        pattern_count_copy = self.pattern_count.copy()
         
         for i in range(len(player_guess)):
-            if player_guess[i] in self.code_pattern:
+            if player_guess[i] in self.code_pattern and pattern_count_copy[player_guess[i]] != 0:
                 correct_number += 1
+                pattern_count_copy[player_guess[i]] -= 1
         
         return correct_number
     
     def check_location(self, player_guess):
+        player_guess = player_guess.guess_array
         correct_location = 0
         
         for i in range(len(player_guess)):
