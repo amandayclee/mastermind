@@ -24,32 +24,55 @@ code breaker has 10 attemps
 - requests
 
 ### Thought process
-1. List all of class we might need
-- Game:
-    State:
-    - code pattern (Duplicate numbers are allowed)
-    - (score)
+1. Think about the userflow
+- When the application starts, ask the user to play a game
+- After the "game" startes, generate a code_pattern, and "user" can make a guess
+- For each "guess", game will give a "feedback" according to the game rule
+- The "interface" of certain game will display the player's guess and feedback, and the turns remaining
 
-    Method:
-    - give feedback to player
-    - calculate scores
+2. List all of class we might need
+- Game:
+    - State:
+        - code pattern (Duplicate numbers are allowed)
+        - (score)
+
+    - Method:
+        - check  guess and give feedback
+        - calculate scores
 
 - Game Interface
-    Method:
-    - view the history of guesses and their feedback
-    - view the number of guesses remaining is displayed
+    - Method:
+        - get_game to display player'guess and feedback
+        - view the history of guesses and their feedback
+        - view the number of guesses remaining is displayed
 
 - Player: contains the attemps player make
-    - number of attempt player made
+    - State:
+        - all_guess
+        - all_feedback
+        - number of attempt player made
 
     Method:
-    - make guess
+        - make guess
 
 - Guess: each guess player makes
     State:
-    - guess array
+        - guess array
+        - time stamp
+    
+    Method:
+    - display guess
 
-2. Code the basic classes
+
+- Feedback
+    State:
+        - correct number
+        - correct location
+
+    Method:
+    - display feedback
+
+3. Code the basic classes
 
 ### Code Structure
 
