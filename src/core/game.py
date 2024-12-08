@@ -6,12 +6,12 @@ from src.config.game_config import GameConfig
 from src.utils.exceptions import GameInitError, GeneratorError, GuessError, InvalidLengthError, RangeError
 
 class Game:
-    def __init__(self):
+    def __init__(self, generator=None):
         self.config = GameConfig()
         self._is_active = True
         self._is_won = False
         self.pattern_count = {}
-        self.generator = RandomOrgGenerator()
+        self.generator = generator or RandomOrgGenerator()
         self.code_pattern = self._generate_code_pattern()
         self.attempts = 0
         self.guess_records = []
