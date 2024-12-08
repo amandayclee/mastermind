@@ -1,5 +1,3 @@
-from datetime import datetime
-from src.core.generators.random_org import RandomOrgGenerator
 from src.models.guess import Guess
 from src.models.feedback import Feedback
 from src.config.game_config import GameConfig
@@ -11,7 +9,7 @@ class Game:
         self._is_active = True
         self._is_won = False
         self.pattern_count = {}
-        self.generator = generator or RandomOrgGenerator()
+        self.generator = generator
         self.code_pattern = self._generate_code_pattern()
         self.attempts = 0
         self.guess_records = []
