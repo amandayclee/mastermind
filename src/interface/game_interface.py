@@ -1,5 +1,5 @@
 from datetime import datetime
-from src.models.exceptions import GuessError, InvalidLengthError, RangeError
+from src.utils.exceptions import GuessError, InvalidLengthError, RangeError
 from src.models.guess import Guess
 from src.models.player import Player
 
