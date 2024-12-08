@@ -1,5 +1,5 @@
 import pytest
-from models.game import Game
+from core.game import Game
 from models.player import Player
 
 

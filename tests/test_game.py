@@ -2,7 +2,7 @@ from datetime import datetime
 from unittest.mock import Mock, patch
 import pytest
 from models.feedback import Feedback
-from models.game import Game
+from core.game import Game
 from models.guess import Guess
 
 
