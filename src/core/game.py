@@ -59,7 +59,7 @@ class Game:
         self.guess_records.append([guess, feedback])
         self.attempts += 1
         
-        self._update_game_state(correct_number, correct_location)
+        self._update_game_state(feedback)
         return feedback
 
     
@@ -78,9 +78,9 @@ class Game:
         
         print(self.pattern_count)
               
-    def _update_game_state(self, correct_number, correct_location):
+    def _update_game_state(self, feedback):
         """Update game state after make a guess"""
-        if correct_number == len(self.code_pattern) and correct_location == len(self.code_pattern):
+        if feedback.is_winning_guess(self.config.pattern_length):
             self._is_won = True
             self._is_active = False
         elif self.attempts >= self.config.max_attempts:
