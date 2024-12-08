@@ -1,7 +1,6 @@
 from datetime import datetime
 from src.utils.exceptions import GuessError, InvalidLengthError, RangeError
 from src.models.guess import Guess
-from src.models.player import Player
 
 
 class GameInterface:

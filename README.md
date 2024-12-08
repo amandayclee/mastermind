@@ -1,9 +1,6 @@
 # Mastermind
 Game Rules
 
-Computer vs. Player
-code_maker = computer
-code_breaker = player
 
 code maker makes a pattern of 4 different number from total 8 different numbers
 -> use Random Number Generator API
