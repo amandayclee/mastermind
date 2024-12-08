@@ -1,9 +1,9 @@
 from datetime import datetime
-import requests
+from src.core.generators.random_org import RandomOrgGenerator
 from src.models.guess import Guess
 from src.models.feedback import Feedback
 from src.config.game_config import GameConfig
-from src.models.exceptions import GuessError, InvalidLengthError, RangeError
+from src.models.exceptions import GameInitError, GeneratorError, GuessError, InvalidLengthError, RangeError
 
 class Game:
     def __init__(self):
@@ -11,6 +11,7 @@ class Game:
         self._is_active = True
         self._is_won = False
         self.pattern_count = {}
+        self.generator = RandomOrgGenerator()
         self.code_pattern = self._generate_code_pattern()
         self.attempts = 0
         self.guess_records = []
@@ -48,38 +49,28 @@ class Game:
 
     def create_guess(self, numbers):
         """Create a valid Guess object from validated numbers"""
-        return Guess(numbers, datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
+        return Guess(numbers)
 
     def make_guess(self, guess):
         """Handle a guess and update game status"""
-        correct_number = self._check_number(guess)
-        correct_location = self._check_location(guess)
-        
+        correct_number, correct_location = self._check_guess(guess)
         feedback = Feedback(correct_number, correct_location)
-        record = [guess, feedback]
         
-        self.guess_records.append(record)
-        
+        self.guess_records.append([guess, feedback])
         self.attempts += 1
         
         self._update_game_state(correct_number, correct_location)
-        
         return feedback
+
     
     def _generate_code_pattern(self):
-        while True:
-            try:
-                api_params = self.config.get_api_params()
-                api_link = self.config.api_base_url + "?" + "&".join(f"{key}={value}" for key, value in api_params.items())
-                
-                response = requests.get(api_link)
-                response.raise_for_status()
-                code_pattern = [int(_) for _ in response.text.strip("\n").split("\t")]
-                self._calculate_pattern_counts(code_pattern)
-                return code_pattern
-            
-            except requests.exceptions.RequestException as e:
-                print(f"{e}, API request failed.")
+        """generator injection"""
+        try:
+            code_pattern = self.generator.generate(self.config)
+            self._calculate_pattern_counts(code_pattern)
+            return code_pattern
+        except GeneratorError as e:
+            raise GameInitError(f"Failed to initialize game: {e}")
         
     def _calculate_pattern_counts(self, code_pattern):
         for num in code_pattern:
@@ -95,26 +86,20 @@ class Game:
         elif self.attempts >= self.config.max_attempts:
             self._is_active = False
         
-    def _check_number(self, player_guess):
-        """Check correct number in a guess"""
-        player_guess = player_guess.get_guess()
-        correct_number = 0
-        pattern_count_copy = self.pattern_count.copy()
-        
-        for i in range(len(player_guess)):
-            if player_guess[i] in self.code_pattern and pattern_count_copy[player_guess[i]] != 0:
-                correct_number += 1
-                pattern_count_copy[player_guess[i]] -= 1
-        
-        return correct_number
-    
-    def _check_location(self, player_guess):
-        """Check correct location in a guess"""
-        player_guess = player_guess.get_guess()
+    def _check_guess(self, guess: Guess):
+        """Check both number and location correctness in one pass"""
+        guess_numbers = guess.get_numbers()
+        pattern_count = self.pattern_count.copy()
         correct_location = 0
+        correct_number = 0
         
-        for i in range(len(player_guess)):
-            if player_guess[i] == self.code_pattern[i]:
+        for idx in range(len(guess_numbers)):
+            if guess_numbers[idx] == self.code_pattern[idx]:
                 correct_location += 1
-        
-        return correct_location
+
+        for guess_num in guess_numbers:
+            if guess_num in pattern_count and pattern_count[guess_num] > 0:
+                correct_number += 1
+                pattern_count[guess_num] -= 1
+                
+        return correct_number, correct_location

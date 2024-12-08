@@ -21,7 +21,7 @@ class GameInterface:
             try:
                 valid_numbers = self.game.validate_guess_input(guess_input)
                 guess = self.game.create_guess(valid_numbers)
-                feedback = self.game.make_guess(guess)
+                self.game.make_guess(guess)
             except (GuessError, InvalidLengthError, RangeError) as e:
                 print(f"{e.message}")
                 continue
@@ -41,9 +41,9 @@ class GameInterface:
         
         print(f"You've played {len(guess_records)} rounds!")
         for record in guess_records:
-            guess_display = " ".join(str(n) for n in record[0].get_guess())
-            feedback = record[1].get_feedback()
-            print(f"Player guesses \"{guess_display}\", {feedback[0]} correct number and {feedback[1]} correction location")
+            guess_display = " ".join(str(n) for n in record[0].get_numbers())
+            feedback = record[1]
+            print(f"Player guesses \"{guess_display}\", {feedback}")
             
         print(f"\nYou have {attempts_left} attempts remaining.")
             
