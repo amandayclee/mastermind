@@ -60,7 +60,6 @@ class Game:
         self._update_game_state(feedback)
         return feedback
 
-    
     def _generate_code_pattern(self):
         """generator injection"""
         try:

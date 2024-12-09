@@ -76,7 +76,8 @@ MASTERMIND/
 ├── tests/
 │   ├── test_feedback.py
 │   ├── test_game.py
-│   └── test_guess.py
+│   ├── test_guess.py
+│   └── test_number_generator.py
 ├── main.py                    
 └── requirements.txt           
 ```

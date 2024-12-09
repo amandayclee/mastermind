@@ -43,15 +43,28 @@ class TestRandomGenerator:
         
         pattern = generator.generate(game_config)
         assert pattern == [1, 2, 3, 4]
+
+    @patch('requests.get')
+    def test_connection_error_generation(self, mock_get, generator, game_config):
+        """Test handling of HTTP errors"""
+        mock_get.side_effect = requests.exceptions.ConnectionError("Network is unreachable")
+        
+        with pytest.raises(GeneratorError) as excinfo:
+            generator.generate(game_config)
+            
+        assert "Failed to generate numbers" in str(excinfo.value)
+        assert mock_get.call_count == generator.MAX_RETRIES
         
     @patch('requests.get')
     def test_http_error_generation(self, mock_get, generator, game_config):
         """Test handling of HTTP errors"""
-        mock_get.side_effect = requests.exceptions.HTTPError("503 Server Error")
+        mock = Mock()
+        mock.status_code = 503
+        mock.raise_for_status.side_effect = requests.exceptions.HTTPError("503 Server Error")
+        mock_get.return_value = mock
         
         with pytest.raises(GeneratorError) as excinfo:
             generator.generate(game_config)
-            raise(GeneratorError())
             
         assert "Failed to generate numbers" in str(excinfo.value)
         assert mock_get.call_count == generator.MAX_RETRIES
