@@ -1,21 +1,17 @@
 # Mastermind
+A Python implementation of the classic code-breaking game with Random.org API integration.
+
 Game Rules
-
-
-code maker makes a pattern of 4 different number from total 8 different numbers
--> use Random Number Generator API
-
-code breaker can guess from [0, 1, 2, 3, 4, 5, 6, 7]
-format "2 2 4 6" all string with white space, and the game match it with the code maker's pattern
--> all correct
--> # of correct number and # of correct location
-
-code breaker has 10 attemps
-
-
+- Computer randomly selects 4 different numbers (0-7)
+- Player has 10 attempts to guess the combination
+- After each guess, feedback is provided
 
 ## Getting Started
-### How to run the code
+### Prerequisites
+- Python 3.8+
+- pip (Python package installer)
+
+### Installation & Setup
 
 1. Clone the repositor
 ```
@@ -23,69 +19,67 @@ git clone https://github.com/amandayclee/mastermind.git
 cd mastermind
 ```
 
-2. Install Hatch if you haven't
+2. Set up virtual environment
 ```
-pip install hatch
+python -m venv venv
 ```
 
-3. Create environment and run
+3. Activate virtual environment
 ```
-hatch env create
-hatch run python src/main.py
+# On Windows:
+venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
+```
+
+4. Install dependencies
+```
+pip install -r requirements.txt
+```
+
+5. Run the game
+```
+python main.py
+```
+
+6. Run the test
+```
+pytest tests/
 ```
 
 ### Thought process
-1. Think about the userflow
-- When the application starts, ask the user to play a game
-- After the "game" startes, generate a code_pattern, and "user" can make a guess
-- For each "guess", game will give a "feedback" according to the game rule
-- The "interface" of certain game will display the player's guess and feedback, and the turns remaining
-
-2. List all of class we might need
-- Game:
-    - State:
-        - code pattern (Duplicate numbers are allowed)
-        - (score)
-        - all guess and feedback
-
-    - Method:
-        - make a guess
-        - check guess and give feedback
-        - calculate scores
-
-- Game Interface
-    - Method:
-        - get_game to display player'guess and feedback
-        - view the history of guesses and their feedback
-        - view the number of guesses remaining is displayed
-
-- Player: contains the attemps player make
-    - State:
-        - game_history
-
-    Method:
-        - start a game
-
-- Guess: each guess player makes
-    State:
-        - guess array
-        - time stamp
-    
-    Method:
-    - display guess
-
-
-- Feedback
-    State:
-        - correct number
-        - correct location
-
-    Method:
-    - display feedback
-
-3. Code the basic classes
+MVP Implementation
+1. Basic game mechanics
+2. API integration
+3. User interface
+4. Error handling
+5. Testing
 
 ### Code Structure
+```
+MASTERMIND/
+├── src/
+│   ├── config/
+│   │   └── game_config.py     
+│   ├── core/
+│   │   ├── generators/
+│   │   │   ├── base.py        
+│   │   │   └── random_org.py  
+│   │   └── game.py            
+│   ├── interface/
+│   │   └── game_interface.py 
+│   ├── models/
+│   │   ├── feedback.py       
+│   │   └── guess.py          
+│   └── utils/
+│       └── exceptions.py     
+├── tests/
+│   ├── test_feedback.py
+│   ├── test_game.py
+│   └── test_guess.py
+├── main.py                    
+└── requirements.txt           
+```
 
 ## Next Step
 - [ ] Add suppot to give hint
