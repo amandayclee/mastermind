@@ -1,20 +1,29 @@
 import pytest
-from models.feedback import Feedback
+from src.models.feedback import Feedback
 
 
-class TestFeedback:
-    def test_feedback_intialization(self):
-        correct_number, correct_location = 2, 1
-        feedback = Feedback(correct_number, correct_location)
-        
-        assert feedback.correct_number == correct_number
-        assert feedback.correct_location == correct_location
+def test_basic_initialization():
+    feedback = Feedback(2, 1)
+    assert feedback.numbers_correct == 2
+    assert feedback.positions_correct == 1
 
-    def test_get_feedback(self):
-        correct_number, correct_location = 2, 1
-        feedback = Feedback(correct_number, correct_location)
-        feedback_result = feedback.get_feedback()
-        
-        assert isinstance(feedback_result, list)
-        assert feedback_result == [correct_number, correct_location]
-                
+@pytest.mark.parametrize("numbers,positions,code_length,expected", [
+    (4, 4, 4, True),   # Perfect match
+    (4, 3, 4, False),  # All numbers correct but one position wrong
+    (4, 2, 4, False),  # All numbers correct but two positions wrong
+    (2, 2, 4, False),  # Partial correct
+    (0, 0, 4, False),  # All incorrect
+])
+def test_winning_guess(numbers, positions, code_length, expected):
+    feedback = Feedback(numbers, positions)
+    assert feedback.is_winning_guess(code_length) == expected
+    
+@pytest.mark.parametrize("numbers,positions,expected_str", [
+    (2, 1, "2 correct numbers and 1 correct positions"),
+    (0, 0, "0 correct numbers and 0 correct positions"),
+    (4, 4, "4 correct numbers and 4 correct positions"),
+])
+def test_string_representation(numbers, positions, expected_str):
+    feedback = Feedback(numbers, positions)
+    assert str(feedback) == expected_str
+    
