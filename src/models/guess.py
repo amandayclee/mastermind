@@ -6,7 +6,6 @@ class Guess:
         initialize a validated guess
         """
         self.numbers = numbers
-        self.timestamp = datetime.now()
     
     def get_numbers(self) -> list[int]:
         """get guess number"""
