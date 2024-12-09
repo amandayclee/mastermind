@@ -8,6 +8,7 @@ class GameInterface:
         self.game = None
         
     def set_game(self, game):
+        """"""
         self.game = game
     
     def run_game(self):
@@ -22,7 +23,7 @@ class GameInterface:
                 guess = self.game.create_guess(valid_numbers)
                 self.game.make_guess(guess)
             except (GuessError, InvalidLengthError, RangeError) as e:
-                print(f"{e.message}")
+                print(f"{e.get_message()}")
                 continue
                             
         self._display_game_result()
