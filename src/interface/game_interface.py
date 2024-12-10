@@ -10,12 +10,12 @@ class GameInterface:
         self.game = game
     
     def run_game(self):
-        print("====== Welcome to Mastermind ======")
+        print("****** Welcome to Mastermind ******")
         print("Type 'exit' if you want to quit")
         
         while self.game.is_active():
             self._display_game_state()
-            guess_input = input("Make a guess:\n")
+            guess_input = input("Please enter 4 numbers with each number is between 0 and 7:\n")
             
             if guess_input == 'exit':
                 return
@@ -33,7 +33,7 @@ class GameInterface:
     def _display_game_state(self):
         # print(f"Code Pattern: {self.game.code_pattern}")
         
-        guess_records = self.game.get_guess_records()
+        guess_records = self.game.guess_records
         attempts_left = self.game.get_remaining_attempts()
         
         if guess_records:
