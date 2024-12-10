@@ -1,10 +1,12 @@
+from src.core.generators.base import NumberGenerator
+from src.core.generators.random_org import RandomOrgGenerator
 from src.models.guess import Guess
 from src.models.feedback import Feedback
 from src.config.game_config import GameConfig
 from src.utils.exceptions import GameInitError, GeneratorError, GuessError, InvalidLengthError, RangeError
 
 class Game:
-    def __init__(self, generator: NumberGenerator =None):
+    def __init__(self, generator: NumberGenerator=RandomOrgGenerator()):
         self.config = GameConfig()
         self._is_active = True
         self._is_won = False
