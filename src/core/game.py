@@ -72,8 +72,6 @@ class Game:
     def _calculate_pattern_counts(self, code_pattern):
         for num in code_pattern:
             self.pattern_count[num] = self.pattern_count.get(num, 0) + 1
-        
-        print(self.pattern_count)
               
     def _update_game_state(self, feedback):
         """Update game state after make a guess"""

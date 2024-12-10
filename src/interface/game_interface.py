@@ -33,7 +33,7 @@ class GameInterface:
     def _display_game_state(self):
         # print(f"Code Pattern: {self.game.code_pattern}")
         
-        guess_records = self.game.get_guess_history()
+        guess_records = self.game.get_guess_records()
         attempts_left = self.game.get_remaining_attempts()
         
         if guess_records:
