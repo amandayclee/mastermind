@@ -1,3 +1,5 @@
+from typing import Dict, List
+from src.config.game_config import GameConfig
 from src.utils.exceptions import GeneratorError
 from .base import NumberGenerator
 import requests
@@ -6,7 +8,7 @@ class RandomOrgGenerator(NumberGenerator):
     BASE_URL = "https://www.random.org/integers/"
     MAX_RETRIES = 5
         
-    def _get_api_params(self, config):
+    def _get_api_params(self, config: GameConfig) -> Dict[str, str]:
         return {
             "num": str(config.pattern_length),
             "min": str(config.min_number),
@@ -17,10 +19,10 @@ class RandomOrgGenerator(NumberGenerator):
             "rnd": "new"
         }
         
-    def _build_url(self, api_params):
+    def _build_url(self, api_params: Dict[str, setattr]) -> str:
         return self.BASE_URL + "?" + "&".join(f"{key}={value}" for key, value in api_params.items())
     
-    def generate(self, config):
+    def generate(self, config: GameConfig) -> List[int]:
         retries = 0
         while retries < self.MAX_RETRIES:
             try:

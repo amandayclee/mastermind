@@ -1,3 +1,4 @@
+from typing import List, Tuple
 from src.core.generators.base import NumberGenerator
 from src.core.generators.random_org import RandomOrgGenerator
 from src.models.guess import Guess
@@ -6,7 +7,7 @@ from src.config.game_config import GameConfig
 from src.utils.exceptions import GameInitError, GeneratorError, GuessError, InvalidLengthError, RangeError
 
 class Game:
-    def __init__(self, generator: NumberGenerator=RandomOrgGenerator()):
+    def __init__(self, generator: NumberGenerator=RandomOrgGenerator()) -> None:
         self.config = GameConfig()
         self._is_active = True
         self._is_won = False
@@ -16,19 +17,19 @@ class Game:
         self.attempts = 0
         self.guess_records = []
         
-    def is_active(self):
+    def is_active(self) -> bool:
         return self._is_active
     
-    def is_won(self):
+    def is_won(self) -> bool:
         return self._is_won
 
-    def get_remaining_attempts(self):
+    def get_remaining_attempts(self) -> int:
         return self.config.max_attempts - self.attempts
     
-    def get_guess_history(self):
+    def get_guess_history(self) -> List[Tuple[Guess, Feedback]]:
         return self.guess_records.copy()
     
-    def validate_guess_input(self, guess_input):
+    def validate_guess_input(self, guess_input: str) -> List[int]:
         """Validate the raw input string"""
         if not guess_input.strip():
             raise GuessError("Input cannot be empty")
@@ -47,11 +48,11 @@ class Game:
                 
         return numbers
 
-    def create_guess(self, numbers):
+    def create_guess(self, numbers: List[int]) -> Guess:
         """Create a valid Guess object from validated numbers"""
         return Guess(numbers)
 
-    def make_guess(self, guess):
+    def make_guess(self, guess: Guess) -> Feedback:
         """Handle a guess and update game status"""
         correct_number, correct_location = self._check_guess(guess)
         feedback = Feedback(correct_number, correct_location)
@@ -62,7 +63,7 @@ class Game:
         self._update_game_state(feedback)
         return feedback
 
-    def _generate_code_pattern(self):
+    def _generate_code_pattern(self) -> List[int]:
         """generator injection"""
         try:
             code_pattern = self.generator.generate(self.config)
@@ -71,11 +72,11 @@ class Game:
         except GeneratorError as e:
             raise GameInitError(f"Failed to initialize game: {e}")
         
-    def _calculate_pattern_counts(self, code_pattern):
+    def _calculate_pattern_counts(self, code_pattern: List[int]) -> None:
         for num in code_pattern:
             self.pattern_count[num] = self.pattern_count.get(num, 0) + 1
               
-    def _update_game_state(self, feedback):
+    def _update_game_state(self, feedback: Feedback) -> None:
         """Update game state after make a guess"""
         if feedback.is_winning_guess(self.config.pattern_length):
             self._is_won = True
@@ -83,7 +84,7 @@ class Game:
         elif self.attempts >= self.config.max_attempts:
             self._is_active = False
         
-    def _check_guess(self, guess: Guess):
+    def _check_guess(self, guess: Guess) -> Tuple[int, int]:
         """Check both number and location correctness in one pass"""
         guess_numbers = guess.get_numbers()
         pattern_count = self.pattern_count.copy()

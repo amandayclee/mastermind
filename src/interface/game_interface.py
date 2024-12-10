@@ -1,15 +1,16 @@
+from src.core.game import Game
 from src.utils.exceptions import GuessError, InvalidLengthError, RangeError
 
 
 class GameInterface:
-    def __init__(self):
+    def __init__(self) -> None:
         self.game = None
         
-    def set_game(self, game):
+    def set_game(self, game: Game) -> None:
         """"""
         self.game = game
     
-    def run_game(self):
+    def run_game(self) -> None:
         print("****** Welcome to Mastermind ******")
         print("Type 'exit' if you want to quit")
         
@@ -30,7 +31,7 @@ class GameInterface:
                             
         self._display_game_result()
             
-    def _display_game_state(self):
+    def _display_game_state(self) -> None:
         # print(f"Code Pattern: {self.game.code_pattern}")
         
         guess_records = self.game.guess_records
@@ -45,7 +46,7 @@ class GameInterface:
             
         print(f"\nAttempts remaining: {attempts_left}\n")
             
-    def _display_game_result(self):
+    def _display_game_result(self) -> None:
         print("\n========= Game Over =========")
         if self.game.is_won():
             print("Congrats! You win the game!")
