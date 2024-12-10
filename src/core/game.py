@@ -1,3 +1,4 @@
+import logging
 from typing import List, Tuple
 from src.core.generators.base import NumberGenerator
 from src.core.generators.random_org import RandomOrgGenerator
@@ -7,8 +8,11 @@ from src.models.feedback import Feedback
 from src.config.game_config import GameConfig
 from src.utils.exceptions import GameInitError, GeneratorError, GuessError, InvalidLengthError, RangeError
 
+logger = logging.getLogger(__name__)
+
 class Game:
     def __init__(self, generator: NumberGenerator=RandomOrgGenerator()) -> None:
+        logger.info("Initializing new game")
         self.config = GameConfig()
         self.status = GameStatus.IN_PROGRESS
         self.pattern_count = {}
@@ -32,18 +36,22 @@ class Game:
     def validate_guess_input(self, guess_input: str) -> List[int]:
         """Validate the raw input string"""
         if not guess_input.strip():
+            logger.warning("Empty input received")
             raise GuessError("Input cannot be empty")
         
         try:
             numbers = [int(x) for x in guess_input]
         except ValueError:
+            logger.warning(f"Non-numeric input received: {guess_input}")
             raise GuessError("Input must be numbers")
             
         if len(numbers) != len(self.code_pattern):
+            logger.warning(f"Invalid length: expected {len(self.code_pattern)}, got {len(numbers)}")
             raise InvalidLengthError(len(self.code_pattern), len(numbers))
             
         for num in numbers:
             if num < self.config.min_number or num > self.config.max_number:
+                logger.warning(f"INumbers must be between 0 and 7: {guess_input}")
                 raise RangeError()
                 
         return numbers
@@ -54,12 +62,14 @@ class Game:
 
     def make_guess(self, guess: Guess) -> Feedback:
         """Handle a guess and update game status"""
+        logger.info(f"Processing guess: {guess}")
         correct_number, correct_location = self._check_guess(guess)
         feedback = Feedback(correct_number, correct_location)
         
         self.guess_records.append([guess, feedback])
         self.attempts += 1
         
+        logger.info(f"Attempt {self.attempts}: Feedback - {feedback}")
         self._update_game_state(feedback)
         return feedback
 
@@ -67,9 +77,11 @@ class Game:
         """generator injection"""
         try:
             code_pattern = self.generator.generate(self.config)
+            logger.info("Code pattern generated successfully")
             self._calculate_pattern_counts(code_pattern)
             return code_pattern
         except GeneratorError as e:
+            logger.error(f"Failed to generate code pattern: {e}")
             raise GameInitError(f"Failed to initialize game: {e}")
         
     def _calculate_pattern_counts(self, code_pattern: List[int]) -> None:

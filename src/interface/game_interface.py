@@ -1,7 +1,9 @@
+import logging
 from src.models.game_status import GameStatus
 from src.core.game import Game
 from src.utils.exceptions import GuessError, InvalidLengthError, RangeError
 
+logger = logging.getLogger(__name__)
 
 class GameInterface:
     def __init__(self) -> None:
