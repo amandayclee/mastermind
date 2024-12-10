@@ -10,11 +10,15 @@ class GameInterface:
         self.game = game
     
     def run_game(self):
-        print("Welcome to the mastermind game!")
+        print("====== Welcome to Mastermind ======")
+        print("Type 'exit' if you want to quit")
         
         while self.game.is_active():
             self._display_game_state()
-            guess_input = input("What's your guess? ")
+            guess_input = input("Make a guess:\n")
+            
+            if guess_input == 'exit':
+                return
             
             try:
                 valid_numbers = self.game.validate_guess_input(guess_input)
@@ -27,25 +31,22 @@ class GameInterface:
         self._display_game_result()
             
     def _display_game_state(self):
-        print(f"Code Pattern: {self.game.code_pattern}")
+        # print(f"Code Pattern: {self.game.code_pattern}")
         
         guess_records = self.game.get_guess_history()
         attempts_left = self.game.get_remaining_attempts()
         
-        if not guess_records:
-            print("It's time for your first guess!")
-            print(f"You have {attempts_left} attempts remaining.")
-            return
+        if guess_records:
+            print("\n====== Previous Guesses ======")
         
-        print(f"You've played {len(guess_records)} rounds!")
         for record in guess_records:
-            guess_display = " ".join(str(n) for n in record[0].get_numbers())
-            feedback = record[1]
-            print(f"Player guesses \"{guess_display}\", {feedback}")
+            print(f"Player guesses \"{record[0]}\", {record[1]}")
+
             
-        print(f"\nYou have {attempts_left} attempts remaining.")
+        print(f"\nAttempts remaining: {attempts_left}\n")
             
     def _display_game_result(self):
+        print("\n========= Game Over =========")
         if self.game.is_won():
             print("Congrats! You win the game!")
         else:
