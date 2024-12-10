@@ -4,7 +4,7 @@ from src.models.guess import Guess
 from src.models.feedback import Feedback
 from src.core.game import Game
 from src.utils.exceptions import GameInitError, GeneratorError, GuessError, InvalidLengthError, RangeError
-
+from src.models.game_status import GameStatus
 
 
 class TestGame:
@@ -71,15 +71,13 @@ class TestGame:
         assert isinstance(feedback, Feedback)
         assert game.attempts == 1
         assert len(game.guess_records) == 1
-        assert not game.is_active()
-        assert game.is_won()
+        assert game.status == GameStatus.WON
         
     def test_make_guess_max_attempts(self, game):
         wrong_guess = Guess([5, 5, 5, 5])
         for _ in range(game.config.max_attempts):
             game.make_guess(wrong_guess)
-        assert not game.is_active()
-        assert not game.is_won()
+        assert game.status == GameStatus.LOST
         assert game.get_remaining_attempts() == 0
         
     def test_get_remaining_attempts(self, game):
@@ -121,3 +119,10 @@ class TestGame:
         
         assert correct_number == expected_numbers
         assert correct_location == expected_locations
+        
+    def test_game_status_transition(self, game):
+        assert game.status == GameStatus.IN_PROGRESS
+        
+        guess = Guess([1, 2, 3, 4])
+        game.make_guess(guess)
+        assert game.status == GameStatus.WON

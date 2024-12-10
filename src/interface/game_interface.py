@@ -1,3 +1,4 @@
+from src.models.game_status import GameStatus
 from src.core.game import Game
 from src.utils.exceptions import GuessError, InvalidLengthError, RangeError
 
@@ -48,7 +49,7 @@ class GameInterface:
             
     def _display_game_result(self) -> None:
         print("\n========= Game Over =========")
-        if self.game.is_won():
+        if self.game.status == GameStatus.WON:
             print("Congrats! You win the game!")
         else:
             print("Game Over! Better luck next time.")

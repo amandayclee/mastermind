@@ -1,6 +1,7 @@
 from typing import List, Tuple
 from src.core.generators.base import NumberGenerator
 from src.core.generators.random_org import RandomOrgGenerator
+from src.models.game_status import GameStatus
 from src.models.guess import Guess
 from src.models.feedback import Feedback
 from src.config.game_config import GameConfig
@@ -9,8 +10,7 @@ from src.utils.exceptions import GameInitError, GeneratorError, GuessError, Inva
 class Game:
     def __init__(self, generator: NumberGenerator=RandomOrgGenerator()) -> None:
         self.config = GameConfig()
-        self._is_active = True
-        self._is_won = False
+        self.status = GameStatus.IN_PROGRESS
         self.pattern_count = {}
         self.generator = generator
         self.code_pattern = self._generate_code_pattern()
@@ -18,10 +18,10 @@ class Game:
         self.guess_records = []
         
     def is_active(self) -> bool:
-        return self._is_active
+        return self.status == GameStatus.IN_PROGRESS
     
     def is_won(self) -> bool:
-        return self._is_won
+        return self.status == GameStatus.WON
 
     def get_remaining_attempts(self) -> int:
         return self.config.max_attempts - self.attempts
@@ -79,10 +79,9 @@ class Game:
     def _update_game_state(self, feedback: Feedback) -> None:
         """Update game state after make a guess"""
         if feedback.is_winning_guess(self.config.pattern_length):
-            self._is_won = True
-            self._is_active = False
+            self.status = GameStatus.WON
         elif self.attempts >= self.config.max_attempts:
-            self._is_active = False
+            self.status = GameStatus.LOST
         
     def _check_guess(self, guess: Guess) -> Tuple[int, int]:
         """Check both number and location correctness in one pass"""
