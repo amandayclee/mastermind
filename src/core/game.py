@@ -135,14 +135,14 @@ class Game:
     
     def _save_state(self) -> None:
         state = GameState(
-            game_id=self.game_id,
-            code_pattern=self.code_pattern,
-            status=self.status,
-            attempts=self.attempts,
-            guess_records=self.guess_records,
-            created_at=self.created_at,
-            updated_at=datetime.now(),
-            config=self.config
+            game_id = self.game_id,
+            code_pattern = self.code_pattern,
+            status = self.status,
+            attempts = self.attempts,
+            guess_records = self.guess_records,
+            created_at = self.created_at,
+            updated_at = datetime.now(),
+            config = self.config
         )
         self.repository.save_game(state)
         
