@@ -10,18 +10,24 @@ class GameInterface:
         self.game = None
         
     def set_game(self, game: Game) -> None:
-        """"""
         self.game = game
+        print(f"\nYour game ID is: {self.game.game_id}")
+        print("Keep this ID if you want to continue this game later!")
     
     def run_game(self) -> None:
-        print("****** Welcome to Mastermind ******")
-        print("Type 'exit' if you want to quit")
+        print("Type 'exit' to return to main menu")
+        print("Type 'id' to see your game ID")
         
         while self.game.is_active():
             self._display_game_state()
             guess_input = input("Please enter 4 numbers with each number is between 0 and 7:\n")
             
-            if guess_input == 'exit':
+            if guess_input == 'id':
+                print(f"\nYour game ID is: {self.game.game_id}")
+                continue
+            elif guess_input == 'exit':
+                print(f"\nExiting game. Your game ID is: {self.game.game_id}")
+                print("Use this ID to continue your game later!")
                 return
             
             try:
