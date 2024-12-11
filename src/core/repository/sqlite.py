@@ -8,14 +8,14 @@ from src.utils.exceptions import DatabaseConnectionError, GameNotFoundError, Loa
 
 class SQLiteGameRepository(GameRepository):
     def __init__(self, db_name: str = "mastermind.db"):
-        self.db_name = db_name
+        self._db_name = db_name
         self._create_table() 
     
     def _create_table(self):
         connection = None
         
         try:
-            connection = sqlite3.connect(self.db_name)
+            connection = sqlite3.connect(self._db_name)
             connection.execute("""
                 CREATE TABLE IF NOT EXISTS games (
                     game_id TEXT PRIMARY KEY,
@@ -41,7 +41,7 @@ class SQLiteGameRepository(GameRepository):
         connection = None
         
         try: 
-            connection = sqlite3.connect(self.db_name)
+            connection = sqlite3.connect(self._db_name)
             data = game_state.to_db_format()
             
             connection.execute("""
@@ -75,7 +75,7 @@ class SQLiteGameRepository(GameRepository):
         connection = None
         
         try:
-            connection = sqlite3.connect(self.db_name)
+            connection = sqlite3.connect(self._db_name)
             cursor = connection.execute("""
                 SELECT code_pattern, status, attempts,
                        guess_records, created_at, updated_at, config
