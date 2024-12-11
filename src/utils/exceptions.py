@@ -48,3 +48,15 @@ class GameNotFoundError(GameError):
     
     def get_message(self) -> str:
         return self._message
+
+class DatabaseError(Exception):
+    @abstractmethod
+    def get_message(self) -> str:
+        pass
+    
+class ConnectionError(DatabaseError):
+    def __init__(self, message: str = "Failed to connect to database"):
+        super().__init__(message)
+        
+    def get_message(self) -> str:
+        return self._message
