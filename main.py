@@ -1,4 +1,5 @@
 from src.core.repository.memory import InMemoryGameRepository
+from src.core.repository.sqlite import SQLiteGameRepository
 from src.interface.game_interface import GameInterface
 from src.core.game import Game
 from src.utils.logging_config import setup_logging_config
@@ -6,7 +7,7 @@ from src.utils.exceptions import GameNotFoundError
 
 def main():
     setup_logging_config()
-    repository = InMemoryGameRepository()
+    repository = SQLiteGameRepository()
     
     while True:
         print("\n****** Mastermind ******")

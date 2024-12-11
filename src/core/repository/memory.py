@@ -7,15 +7,12 @@ class InMemoryGameRepository(GameRepository):
     def __init__(self):
         self._store = {}
         
-    def save_game(self, game_state: GameState) -> str:
+    def save_game(self, game_state: GameState) -> None:
         game_id = game_state.game_id
         self._store[game_id] = game_state.to_db_format()
-        return game_id
     
     def load_game(self, game_id: str) -> Optional[GameState]:
         stored_data = self._store.get(game_id)
 
         if stored_data is not None:
             return GameState.from_db_format(stored_data)
-        
-        return None

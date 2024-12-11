@@ -54,8 +54,22 @@ class DatabaseError(Exception):
     def get_message(self) -> str:
         pass
     
-class ConnectionError(DatabaseError):
+class DatabaseConnectionError(DatabaseError):
     def __init__(self, message: str = "Failed to connect to database"):
+        super().__init__(message)
+        
+    def get_message(self) -> str:
+        return self._message
+
+class SaveError(DatabaseError):
+    def __init__(self, message: str = "Failed to save the game to database"):
+        super().__init__(message)
+        
+    def get_message(self) -> str:
+        return self._message
+
+class LoadError(DatabaseError):
+    def __init__(self, message: str = "Failed to load the game to database"):
         super().__init__(message)
         
     def get_message(self) -> str:
