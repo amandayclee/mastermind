@@ -2,7 +2,7 @@ from datetime import datetime
 import logging
 from typing import List, Tuple
 import uuid
-from models.game_state import GameState
+from src.models.game_state import GameState
 from src.core.repository.base import GameRepository
 from src.core.repository.memory import InMemoryGameRepository
 from src.core.generators.base import NumberGenerator
@@ -141,7 +141,8 @@ class Game:
             attempts=self.attempts,
             guess_records=self.guess_records,
             created_at=self.created_at,
-            updated_at=datetime.now()
+            updated_at=datetime.now(),
+            config=self.config
         )
         self.repository.save_game(state)
         
@@ -152,6 +153,7 @@ class Game:
         self.attempts = state.attempts
         self.guess_records = state.guess_records
         self.created_at = state.created_at
+        self.config = state.config
         
         self.pattern_count = {}
         for num in self.code_pattern:
