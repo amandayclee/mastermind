@@ -3,7 +3,7 @@ import sqlite3
 from typing import Optional
 from src.models.game_state import GameState
 from src.core.repository.base import GameRepository
-from src.utils.exceptions import DatabaseConnectionError, LoadError, SaveError
+from src.utils.exceptions import DatabaseConnectionError, GameNotFoundError, LoadError, SaveError
 
 
 class SQLiteGameRepository(GameRepository):
@@ -83,6 +83,9 @@ class SQLiteGameRepository(GameRepository):
             """, (game_id,))
             
             game_data = cursor.fetchone()
+            
+            if game_data is None:
+                raise GameNotFoundError(f"No game found with ID: {game_id}")
 
             try:
                 data = {
