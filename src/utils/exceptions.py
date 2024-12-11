@@ -40,3 +40,11 @@ class GameInitError(GameError):
     
     def get_message(self) -> str:
         return self._message
+
+class GameNotFoundError(GameError):
+    def __init__(self, game_id: str):
+        self._message = f"Game {game_id} not found"
+        super().__init__(self._message)
+    
+    def get_message(self) -> str:
+        return self._message

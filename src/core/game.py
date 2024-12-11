@@ -1,25 +1,44 @@
+from datetime import datetime
 import logging
 from typing import List, Tuple
+import uuid
+from models.game_state import GameState
+from src.core.repository.base import GameRepository
+from src.core.repository.memory import InMemoryGameRepository
 from src.core.generators.base import NumberGenerator
 from src.core.generators.random_org import RandomOrgGenerator
 from src.models.game_status import GameStatus
 from src.models.guess import Guess
 from src.models.feedback import Feedback
 from src.config.game_config import GameConfig
-from src.utils.exceptions import GameInitError, GeneratorError, GuessError, InvalidLengthError, RangeError
+from src.utils.exceptions import GameNotFoundError, GameInitError, GeneratorError, GuessError, InvalidLengthError, RangeError
 
 logger = logging.getLogger(__name__)
 
 class Game:
-    def __init__(self, generator: NumberGenerator=RandomOrgGenerator()) -> None:
-        logger.info("Initializing new game")
-        self.config = GameConfig()
-        self.status = GameStatus.IN_PROGRESS
-        self.pattern_count = {}
-        self.generator = generator
-        self.code_pattern = self._generate_code_pattern()
-        self.attempts = 0
-        self.guess_records = []
+    def __init__(self, 
+                 generator: NumberGenerator=RandomOrgGenerator(), repository: GameRepository = InMemoryGameRepository(), game_id: str = None) -> None:
+        self.repository = repository
+        
+        if game_id:
+            logger.info("Reload old game state")
+            state = self.repository.load_game(game_id)
+            if not state:
+                logger.error(f"Game {game_id} not found")
+                raise GameNotFoundError(game_id)
+            self._restore_state(state)
+        else:
+            logger.info("Initializing new game")
+            self.game_id = str(uuid.uuid4()) 
+            self.config = GameConfig()
+            self.status = GameStatus.IN_PROGRESS
+            self.pattern_count = {}
+            self.generator = generator
+            self.code_pattern = self._generate_code_pattern()
+            self.attempts = 0
+            self.guess_records = []
+            self.created_at = datetime.now()
+            self._save_state()
         
     def is_active(self) -> bool:
         return self.status == GameStatus.IN_PROGRESS
@@ -66,11 +85,12 @@ class Game:
         correct_number, correct_location = self._check_guess(guess)
         feedback = Feedback(correct_number, correct_location)
         
-        self.guess_records.append([guess, feedback])
+        self.guess_records.append((guess, feedback))
         self.attempts += 1
         
         logger.info(f"Attempt {self.attempts}: Feedback - {feedback}")
         self._update_game_state(feedback)
+        self._save_state()
         return feedback
 
     def _generate_code_pattern(self) -> List[int]:
@@ -112,3 +132,27 @@ class Game:
                 pattern_count[guess_num] -= 1
                 
         return correct_number, correct_location
+    
+    def _save_state(self) -> None:
+        state = GameState(
+            game_id=self.game_id,
+            code_pattern=self.code_pattern,
+            status=self.status,
+            attempts=self.attempts,
+            guess_records=self.guess_records,
+            created_at=self.created_at,
+            updated_at=datetime.now()
+        )
+        self.repository.save_game(state)
+        
+    def _restore_state(self, state: GameState) -> None:
+        self.game_id = state.game_id
+        self.code_pattern = state.code_pattern
+        self.status = state.status
+        self.attempts = state.attempts
+        self.guess_records = state.guess_records
+        self.created_at = state.created_at
+        
+        self.pattern_count = {}
+        for num in self.code_pattern:
+            self.pattern_count[num] = self.pattern_count.get(num, 0) + 1
