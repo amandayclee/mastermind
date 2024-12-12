@@ -1,7 +1,7 @@
 from unittest.mock import Mock
 import pytest
 
-from core.game.game import Game
+from src.core.game.game import Game
 from src.models.guess import Guess
 from src.models.game_status import GameStatus
 
