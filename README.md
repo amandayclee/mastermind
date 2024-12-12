@@ -42,9 +42,14 @@ pip install -r requirements.txt
 python main.py
 ```
 
-6. Run the test
+6. View the game's test reports
 ```
-pytest tests/
+pytest
+```
+
+7. View the game's documentation using `pydoc`
+```
+python -m pydoc -b
 ```
 
 ### Thought process
@@ -56,36 +61,13 @@ MVP Implementation
 5. Testing
 
 ### Code Structure
-```
-MASTERMIND/
-├── src/
-│   ├── config/
-│   │   └── game_config.py     
-│   ├── core/
-│   │   ├── generators/
-│   │   │   ├── base.py        
-│   │   │   └── random_org.py  
-│   │   └── game.py            
-│   ├── interface/
-│   │   └── game_interface.py 
-│   ├── models/
-│   │   ├── feedback.py       
-│   │   └── guess.py          
-│   └── utils/
-│       └── exceptions.py     
-├── tests/
-│   ├── test_feedback.py
-│   ├── test_game.py
-│   ├── test_guess.py
-│   └── test_number_generator.py
-├── main.py                    
-└── requirements.txt           
-```
+
 
 ## Next Step
 - [ ] Add suppot to give hint
-- [ ] Add a configurable "difficulty level" and adjust the numbers that are userd
+- [ ] Add a configurable "difficulty level" and adjust the numbers that are used
 - [ ] Extend to multi-player
 - [ ] Keep track of scores
 - [ ] Add a timer for the entire game, or each guess attempts
-- [ ] Anything else that you can come up with to make the game more fun/interesting that demostrates your backend potential
+- [x] Develop an event logging system to enhance the development experience
+- [x] Enable persistent game storage to allow users to restore their games after exiting the application
