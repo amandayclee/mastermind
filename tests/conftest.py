@@ -1,4 +1,6 @@
+from unittest.mock import Mock
 import pytest
+from src.core.repository.base import GameRepository
 from src.models.guess import Guess
 from src.config.game_config import GameConfig
 
@@ -9,3 +11,7 @@ def game_config():
 @pytest.fixture
 def sample_guess():
     return Guess([1, 2, 3, 4])
+
+@pytest.fixture
+def mock_repository():
+    return Mock(spec=GameRepository)
