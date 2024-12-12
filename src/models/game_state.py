@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+import logging
 from typing import Any, Dict, List, Tuple
 
 from src.config.game_config import GameConfig
@@ -7,9 +8,34 @@ from src.models.feedback import Feedback
 from src.models.guess import Guess
 from src.models.game_status import GameStatus
 
+logger = logging.getLogger(__name__)
 
 @dataclass
 class GameState:
+    """
+    A complete state for a masterming game session, can be saved and restored for repository use.
+    
+    The state includs:
+    - Unique identifier for the game
+    - Code pattern for player to crack
+    - Current game status
+    - Number of attempt made by the player
+    - Complete guess history and each guess' feedback
+    - Timestamp the game initialized
+    - Timestamp the state updated
+    - Game configuration setting
+    
+    Attributes:
+        game_id (str): Unique identifier for the game session
+        code_pattern (List[int]): The secret code players try to guess
+        status (GameStatus): Current state of the game
+        attempts (int): Number of guesses made so far
+        guess_records (List[Tuple[Guess, Feedback]]): History of all guesses and their feedback
+        created_at (datetime): When the game was started
+        updated_at (datetime): When the game was last modified
+        config (GameConfig): Configuration settings for this game
+    """
+    
     game_id: str
     code_pattern: List[int]
     status: GameStatus
@@ -20,6 +46,17 @@ class GameState:
     config: GameConfig
     
     def to_db_format(self) -> Dict[str, Any]:
+        """
+        Convert the game state to a format suitable for database storage.
+        Complex data format like each record in guess_records is converted from Tuple to dict.
+        Guess object inside each record is converted to simple list.
+        Feedback object each record is converted to simple dict.
+
+        Returns:
+            Dict[str, Any]: Database-friendly representation of the game state
+        """
+        logger.debug(f"Converting game {self.game_id} to database format")
+        
         temp_guess_records = []
         for guess, feedback in self.guess_records:
             temp_dict = {
@@ -49,7 +86,21 @@ class GameState:
     
     @classmethod
     def from_db_format(cls, data: Dict[str, Any]) -> 'GameState':
+        """
+        Create a GameState instance from database-formatted data.
+        This class method reconstructs a GameState object from its serialized
+        database representation.
+
+        Args:
+            data (Dict[str, Any]): The database representation of a game state
+
+        Returns:
+            GameState: A new GameState instance representing the stored game
+        """
+        logger.debug(f"Reconstructing game state from database format for game {data.get('game_id')}")
+        
         temp_guess_records = []
+        
         for record in data["guess_records"]:
             temp_tuple = (
                 Guess(record["guess"]),
