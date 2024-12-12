@@ -1,5 +1,7 @@
 venv
 .coverage
+coverage.xml
+htmlcov/
 app_logs/
 *.log
 *.db
