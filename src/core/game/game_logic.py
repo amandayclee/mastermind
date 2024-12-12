@@ -7,6 +7,7 @@ from src.config.game_config import GameConfig
 from src.utils.exceptions import GameInitError, GeneratorError
 
 logger = logging.getLogger(__name__)
+
 class GameLogic:
     """
     Handles the core game logic for the Mastermind game.

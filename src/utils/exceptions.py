@@ -1,4 +1,7 @@
-from abc import ABC, abstractmethod
+from abc import ABC
+import logging
+
+logger = logging.getLogger(__name__)
 
 class GameError(Exception, ABC):
     """

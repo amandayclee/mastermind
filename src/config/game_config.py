@@ -1,3 +1,8 @@
+import logging
+
+
+logger = logging.getLogger(__name__)
+
 class GameConfig():
     """
     Configuration class for the Mastermind game settings.

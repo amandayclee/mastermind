@@ -1,10 +1,12 @@
 import json
+import logging
 import sqlite3
 from typing import Optional
 from src.models.game_state import GameState
 from src.core.repository.base import GameRepository
 from src.utils.exceptions import DatabaseError, GameNotFoundError, LoadError, SaveError
 
+logger = logging.getLogger(__name__)
 
 class SQLiteGameRepository(GameRepository):
     """
@@ -132,20 +134,16 @@ class SQLiteGameRepository(GameRepository):
             if game_data is None:
                 raise GameNotFoundError(game_id)
 
-            try:
-                data = {
-                    "game_id": game_id,
-                    "code_pattern": json.loads(game_data[0]),
-                    "status": game_data[1],
-                    "attempts": game_data[2],
-                    "guess_records": json.loads(game_data[3]),
-                    "created_at": game_data[4],
-                    "updated_at": game_data[5],
-                    "config": json.loads(game_data[6])
-                }
-                
-            except json.JSONDecodeError as e:
-                raise LoadError()
+            data = {
+                "game_id": game_id,
+                "code_pattern": json.loads(game_data[0]),
+                "status": game_data[1],
+                "attempts": game_data[2],
+                "guess_records": json.loads(game_data[3]),
+                "created_at": game_data[4],
+                "updated_at": game_data[5],
+                "config": json.loads(game_data[6])
+            }
 
             return GameState.from_db_format(data)
         

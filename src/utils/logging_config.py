@@ -1,5 +1,9 @@
 import logging
 from pathlib import Path
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 def setup_logging_config(log_directory: str = "app_logs") -> None:

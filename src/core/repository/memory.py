@@ -1,6 +1,10 @@
 from typing import Optional
 from src.models.game_state import GameState
 from src.core.repository.base import GameRepository
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class InMemoryGameRepository(GameRepository):

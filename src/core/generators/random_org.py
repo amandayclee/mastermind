@@ -7,6 +7,7 @@ import requests
 
 
 logger = logging.getLogger(__name__)
+
 class RandomOrgGenerator(NumberGenerator):
     """
     Number generator implementation using Random.org's HTTP API.
