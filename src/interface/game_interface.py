@@ -1,6 +1,6 @@
 import logging
 from src.models.game_status import GameStatus
-from src.core.game import Game
+from src.core.game.game import Game
 from src.utils.exceptions import GuessError, InvalidLengthError, RangeError
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ class GameInterface:
         print("Type 'exit' to return to main menu")
         print("Type 'id' to see your game ID")
         
-        while self.game.is_active():
+        while self.game.get_status() == GameStatus.IN_PROGRESS:
             self._display_game_state()
             guess_input = input("Please enter 4 numbers with each number is between 0 and 7:\n")
             
@@ -31,9 +31,8 @@ class GameInterface:
                 return
             
             try:
-                valid_numbers = self.game.validate_guess_input(guess_input)
-                guess = self.game.create_guess(valid_numbers)
-                self.game.make_guess(guess)
+                valid_guess = self.game.validate_guess_input(guess_input)
+                self.game.make_guess(valid_guess)
             except (GuessError, InvalidLengthError, RangeError) as e:
                 print(f"{e.get_message()}")
                 continue
@@ -57,8 +56,8 @@ class GameInterface:
             
     def _display_game_result(self) -> None:
         print("\n========= Game Over =========")
-        if self.game.status == GameStatus.WON:
+        if self.game.get_status() == GameStatus.WON:
             print("Congrats! You win the game!")
         else:
             print("Game Over! Better luck next time.")
-            print(f"The code was: {' '.join(str(n) for n in self.game.code_pattern)}")
+            print(f"The code was: {' '.join(str(n) for n in self.game.get_code_pattern())}")

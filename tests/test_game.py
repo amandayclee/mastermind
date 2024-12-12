@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import Mock
 from src.models.guess import Guess
 from src.models.feedback import Feedback
-from src.core.game import Game
+from core.game.game import Game
 from src.utils.exceptions import GameInitError, GeneratorError, GuessError, InvalidLengthError, RangeError
 from src.models.game_status import GameStatus
 
