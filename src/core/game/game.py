@@ -54,6 +54,7 @@ class Game:
         if game_id:
             state = self.state_manager.load_state(game_id)
             self._restore_state(state)
+            
         else:
             self.initialize_new_game(generator)
             self._save_current_state()
@@ -168,7 +169,7 @@ class Game:
         for num in numbers:
             if num < self.config.min_number or num > self.config.max_number:
                 logger.warning(f"INumbers must be between 0 and 7: {guess_input}")
-                raise RangeError()
+                raise RangeError(num, self.config.min_number, self.config.max_number)
                 
         return Guess(numbers)
     

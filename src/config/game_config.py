@@ -18,6 +18,12 @@ class GameConfig():
                  max_attempts: int = 10) -> None:
         """
         Initialize a new game configuration.
+        
+        Args:
+        pattern_length (int): Length of the code pattern to guess (default: 4)
+        min_number (int): Minimum value for each digit in the pattern (default: 0)
+        max_number (int): Maximum value for each digit in the pattern (default: 7)
+        max_attempts (int): Maximum number of guess attempts allowed (default: 10)
         """
         self.pattern_length = pattern_length
         self.min_number = min_number

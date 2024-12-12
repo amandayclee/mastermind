@@ -16,8 +16,7 @@ class GameLogic:
     generation and maintains game configuration.
     
     Attributes:
-        config (GameConfig): Configuration settings for the game including code length,
-            value ranges, and maximum attempts.
+        config (GameConfig): Configuration settings for the game including code length, value ranges, and maximum attempts.
     """
     def __init__(self, config: GameConfig):
         """

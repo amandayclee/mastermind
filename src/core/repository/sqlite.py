@@ -3,7 +3,7 @@ import sqlite3
 from typing import Optional
 from src.models.game_state import GameState
 from src.core.repository.base import GameRepository
-from src.utils.exceptions import DatabaseConnectionError, GameNotFoundError, LoadError, SaveError
+from src.utils.exceptions import DatabaseError, GameNotFoundError, LoadError, SaveError
 
 
 class SQLiteGameRepository(GameRepository):
@@ -52,7 +52,7 @@ class SQLiteGameRepository(GameRepository):
             connection.commit()
             
         except sqlite3.Error as e:
-            raise DatabaseConnectionError(f"Cannot create initial table: {str(e)}")
+            raise DatabaseError(f"Cannot create initial table: {str(e)}")
 
         finally:
             if connection:
@@ -130,7 +130,7 @@ class SQLiteGameRepository(GameRepository):
             game_data = cursor.fetchone()
             
             if game_data is None:
-                raise GameNotFoundError(f"No game found with ID: {game_id}")
+                raise GameNotFoundError(game_id)
 
             try:
                 data = {
@@ -145,12 +145,12 @@ class SQLiteGameRepository(GameRepository):
                 }
                 
             except json.JSONDecodeError as e:
-                raise LoadError(f"Cannot decode game data: {game_id}): {str(e)}")
+                raise LoadError()
 
             return GameState.from_db_format(data)
         
         except sqlite3.Error as e:
-            raise LoadError(f"Cannot load the game: {str(e)}")
+            raise LoadError()
         
         finally:
             if connection:

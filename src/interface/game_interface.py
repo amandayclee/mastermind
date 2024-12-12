@@ -46,8 +46,9 @@ class GameInterface:
                 game_id = input("Enter your game ID: ")
                 try:
                     self.game = Game(repository=self.repository, game_id=game_id)
-                except GameNotFoundError:
-                    print(f"No game found with ID: {game_id}")
+                    self.run_game()
+                except GameNotFoundError as e:
+                    raise
             elif choice == "3":
                 print("Thanks for playing!")
                 break
