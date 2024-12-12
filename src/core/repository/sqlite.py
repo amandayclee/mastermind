@@ -7,11 +7,32 @@ from src.utils.exceptions import DatabaseConnectionError, GameNotFoundError, Loa
 
 
 class SQLiteGameRepository(GameRepository):
+    """
+    SQLite implementation of the game repository for storing and retrieving game states.
+
+    Attributes:
+        _db_name (str): Name of the SQLite database file
+    """
     def __init__(self, db_name: str = "mastermind.db"):
+        """
+        Initialize the SQLite repository with specified database name.
+        
+        Args:
+            db_name (str): Name of the database file. Defaults to "mastermind.db"
+            
+        Raises:
+            DatabaseConnectionError: If database initialization fails
+        """
         self._db_name = db_name
         self._create_table() 
     
     def _create_table(self):
+        """
+        Create the games table if it doesn't exist.
+        
+        Raises:
+            DatabaseConnectionError: If table creation fails
+        """
         connection = None
         
         try:
@@ -38,6 +59,16 @@ class SQLiteGameRepository(GameRepository):
                     connection.close()
 
     def save_game(self, game_state: GameState) -> None:
+        """
+        Save or update a game state in the database.
+    
+        Args:
+            game_state (GameState): The game state to save
+            
+        Raises:
+            SaveError: If saving the game state fails
+            
+        """
         connection = None
         
         try: 
@@ -72,6 +103,20 @@ class SQLiteGameRepository(GameRepository):
                     connection.close()
                 
     def load_game(self, game_id: str) -> Optional[GameState]:
+        """
+        Load a game state from the database by its ID.
+        
+        Args:
+            game_id (str): The unique identifier of the game to load
+            
+        Returns:
+            GameState: The loaded game state
+            
+        Raises:
+            GameNotFoundError: If no game exists with the given ID
+            LoadError: If loading or decoding the game data fails
+
+        """
         connection = None
         
         try:

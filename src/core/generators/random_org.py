@@ -8,10 +8,27 @@ import requests
 
 logger = logging.getLogger(__name__)
 class RandomOrgGenerator(NumberGenerator):
+    """
+    Number generator implementation using Random.org's HTTP API.
+    
+    Attributes:
+        BASE_URL (str): Base URL for Random.org's integer generator API
+        MAX_RETRIES (int): Maximum number of API call attempts before failing
+    """
+    
     BASE_URL = "https://www.random.org/integers/"
     MAX_RETRIES = 5
         
     def _get_api_params(self, config: GameConfig) -> Dict[str, str]:
+        """
+        Create parameter dictionary for Random.org API call.
+        
+        Args:
+            config: Game configuration containing number generation parameters
+
+        Returns:
+            Dictionary of parameters formatted for the Random.org API
+        """
         return {
             "num": str(config.pattern_length),
             "min": str(config.min_number),
@@ -23,9 +40,32 @@ class RandomOrgGenerator(NumberGenerator):
         }
         
     def _build_url(self, api_params: Dict[str, setattr]) -> str:
+        """
+        Construct the full API URL with parameters.
+        
+        Args:
+            api_params: Dictionary of API parameters
+
+        Returns:
+            Complete URL string for the API request
+        """
         return self.BASE_URL + "?" + "&".join(f"{key}={value}" for key, value in api_params.items())
     
     def generate(self, config: GameConfig) -> List[int]:
+        """
+        Generate random numbers using Random.org's API.
+        
+        Implements retry logic for failed API calls and handles response parsing.
+        
+        Args:
+            config: Game configuration containing number generation parameters
+
+        Returns:
+            List of randomly generated integers
+
+        Raises:
+            GeneratorError: If all retry attempts fail
+        """
         retries = 0
         while retries < self.MAX_RETRIES:
             try:
