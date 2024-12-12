@@ -5,7 +5,7 @@ from src.core.game.game_logic import GameLogic
 from src.core.game.state_manager import StateManager
 from src.models.guess import Guess
 from src.models.feedback import Feedback
-from src.utils.exceptions import GameInitError, GeneratorError, GuessError, InvalidLengthError, RangeError
+from src.utils.exceptions import GuessError, InvalidLengthError, RangeError
 from src.models.game_status import GameStatus
 
 
@@ -92,6 +92,15 @@ class TestGame:
             game.validate_guess_input(invalid_input)
     
     
+    def test_validate_guess_input_valid(self, game):
+        guess = game.validate_guess_input("1234")
+        game.make_guess(guess)
+        
+        history = game.get_guess_history()
+        assert isinstance(guess, Guess)
+        assert history[0][0].get_numbers() == [1, 2, 3, 4]
+        
+        
     def test_get_guess_history(self, game):
         guess1 = Guess([1, 1, 1, 1])
         guess2 = Guess([2, 2, 2, 2])
@@ -108,14 +117,18 @@ class TestGame:
         initial_remaining = game.get_remaining_attempts()
         game.make_guess(Guess([5, 5, 5, 5]))
         assert game.get_remaining_attempts() == initial_remaining - 1
-    
-    def test_game_status_transition(self, game):
-        assert game.status == GameStatus.IN_PROGRESS
+        
+    def test_get_status(self, game):
+        assert game.get_status() == GameStatus.IN_PROGRESS
         
         guess = Guess([1, 2, 3, 4])
         game.make_guess(guess)
-        assert game.status == GameStatus.WON
-    
+        
+        assert game.get_status() == GameStatus.WON
+
+    def test_get_code_pattern(self, game):        
+        assert game.get_code_pattern() == game.code_pattern
+
         
     # def test_generate_code_pattern_error_handling(self):
     #     mock_generator = Mock()
