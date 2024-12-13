@@ -1,6 +1,8 @@
+import logging
 from typing import List
 from src.core.config.game_config import GameConfig
 
+logger = logging.getLogger(__name__)
 
 class ValidationResult:
     """
@@ -37,6 +39,8 @@ class InputValidator:
             config: Game configuration containing rules for validation
         """
         self.config = config
+        logger.debug("Initialized input validator with config: pattern_length=%d",
+            config.pattern_length)
         
     def validate_guess_input(self, guess_input: str) -> ValidationResult:
         """
@@ -51,6 +55,8 @@ class InputValidator:
         Returns:
             ValidationResult indicating whether input is valid and why if not
         """
+        logger.debug("Validating guess input: %s", guess_input)
+        
         if not guess_input.strip():
             return ValidationResult(
                 is_valid=False,
@@ -76,7 +82,8 @@ class InputValidator:
                 message=f"Must enter exactly {self.config.pattern_length} numbers",
                 error_code="INVALID_LENGTH"
             )
-
+            
+        logger.debug("Guess input format validation successful")
         return ValidationResult(is_valid=True)
     
     def validate_number_range(self, numbers: List[int]) -> ValidationResult:
@@ -97,7 +104,7 @@ class InputValidator:
                            f"and {self.config.max_number}",
                     error_code="OUT_OF_RANGE"
                 )
-        
+        logger.debug("Guess input range validation successful")
         return ValidationResult(is_valid=True)
     
     def validate_game_id(self, game_id: str) -> ValidationResult:
@@ -133,6 +140,7 @@ class InputValidator:
                 error_code="INVALID_ID_FORMAT"
             )
 
+        logger.debug("Game ID validation successful")
         return ValidationResult(is_valid=True)
     
     def validate_difficulty_selection(self, selection: str) -> ValidationResult:
@@ -159,6 +167,7 @@ class InputValidator:
                 error_code="INVALID_DIFFICULTY"
             )
 
+        logger.debug("Difficulty selection validation successful")
         return ValidationResult(is_valid=True)
     
     def update_config(self, new_config: GameConfig) -> None:
@@ -170,3 +179,5 @@ class InputValidator:
             new_config: New game configuration to use for validation
         """
         self.config = new_config
+        
+        logger.debug("Update config after loading successful")

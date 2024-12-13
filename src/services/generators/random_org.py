@@ -98,6 +98,9 @@ class RandomOrgGenerator(NumberGenerator):
         retries = 0
         while retries < self.MAX_RETRIES:
             try:
+                logger.info("Attempting to generate numbers from Random.org (attempt %d/%d)",
+                       retries + 1, self.MAX_RETRIES)
+            
                 api_params = self._get_api_params(config)
                 api_link = self._build_url(api_params)
                 
@@ -106,12 +109,16 @@ class RandomOrgGenerator(NumberGenerator):
                 code_pattern = [int(_) for _ in response.text.strip("\n").split("\t")]
                 logger.info("Successfully generated numbers from Random.org")
                 
+                logger.info("Successfully generated %d numbers from Random.org",
+                    len(code_pattern))
+                
                 return code_pattern
             
             except requests.exceptions.RequestException as e:
                 retries += 1
                 last_error = e
-                logger.warning(f"API call attempt {retries} failed: {e}")
+                logger.warning("API call attempt %d/%d failed: %s",
+                            retries, self.MAX_RETRIES, str(e))
 
         try:
             return self._generate_fallback(config)
