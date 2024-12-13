@@ -35,53 +35,74 @@ class GameInterface:
         
         The menu continues to loop until the user chooses to exit.
         """
+        logger.info("Starting main menu")
         while True:
             print("\n****** Mastermind ******")
             print("1. New Game")
             print("2. Load Game")
             print("3. Exit Program")
             choice = input("Select an option (1-3): ")
+            logger.debug("User selected menu option: %s", choice)
             
             if choice == "1":
-                difficulty = self._select_difficulty()
-                config = GameConfig(difficulty=difficulty)
-                self.validator = InputValidator(config)
-                self.game = Game(repository=self.repository, config=config)
-                print(f"\nYour game ID is: {self.game.game_id}")
-                print("Keep this ID if you want to continue this game later!\n")
-                self.run_game()
+                self._handle_new_game()
             elif choice == "2":
-                while True:
-                        game_id = input("Enter your game ID (or 'exit' to return to menu): ").strip()
-                        
-                        if game_id.lower() == 'exit':
-                            print("Returning to main menu...\n")
-                            break
-                            
-                        id_result = self.validator.validate_game_id(game_id)
-                        if not id_result.is_valid:
-                            print(id_result.message)
-                            continue
-                        
-                        try:
-                            self.game = Game(repository=self.repository, game_id=game_id)
-                            self.validator.update_config(self.game.config)
-                            self.run_game()
-                            break  
-                        except GameNotFoundError:
-                            print(f"Game with ID '{game_id}' not found.\n")
-                            print("Please try again or type 'exit' to return to the main menu.\n")
+                self._handle_load_game()
             elif choice == "3":
+                logger.info("User chose to exit program")
                 print("Thanks for playing!")
                 break
             else:
+                logger.warning("Invalid menu choice: %s", choice)
                 print("Invalid choice. Please select 1, 2, or 3")
+                
+    def _handle_new_game(self) -> None:
+        """
+        Handle the creation of a new game.
+        """
+        difficulty = self._select_difficulty()
+        config = GameConfig(difficulty=difficulty)
+        self.validator = InputValidator(config)
+        self.game = Game(repository=self.repository, config=config)
+        logger.info("New game created with ID: %s", self.game.game_id)
         
+        print(f"\nYour game ID is: {self.game.game_id}")
+        print("Keep this ID if you want to continue this game later!\n")
+        self.run_game()        
+        
+    def _handle_load_game(self) -> None:
+        """
+        Handle loading of an existing game.
+        """
+        while True:
+            game_id = input("Enter your game ID (or 'exit' to return to menu): ").strip()
+            
+            if game_id.lower() == 'exit':
+                print("Returning to main menu...\n")
+                break
+                
+            id_result = self.validator.validate_game_id(game_id)
+            if not id_result.is_valid:
+                logger.warning("Invalid game ID format: %s", game_id)
+                print(id_result.message)
+                continue
+            
+            try:
+                self.game = Game(repository=self.repository, game_id=game_id)
+                self.validator.update_config(self.game.config)
+                logger.info("Successfully loaded game: %s", game_id)
+                self.run_game()
+                break  
+            except GameNotFoundError:
+                logger.warning("Attempted to load non-existent game: %s", game_id)
+                print(f"Game with ID '{game_id}' not found.\n")
+                print("Please try again or type 'exit' to return to the main menu.\n")
     
     def run_game(self) -> None:
         """
         Run the main game loop.
         """
+        logger.info("Starting game session")
         print("Type 'exit' to return to main menu")
         print("Type 'id' to see your game ID")
         
@@ -93,6 +114,7 @@ class GameInterface:
                 print(f"\nYour game ID is: {self.game.game_id}")
                 continue
             elif guess_input == 'exit':
+                logger.info("User chose to exit current game: %s", self.game.game_id)
                 print(f"\nExiting game. Your game ID is: {self.game.game_id}")
                 print("Use this ID to continue your game later!")
                 return
@@ -111,22 +133,22 @@ class GameInterface:
         """
         format_result = self.validator.validate_guess_input(guess_input)
         if not format_result.is_valid:
+            logger.warning("Invalid guess format: %s", guess_input)
             print(format_result.message)
             return
 
-        try:
-            numbers = [int(x) for x in guess_input.split()]
-            
-            range_result = self.validator.validate_number_range(numbers)
-            if not range_result.is_valid:
-                print(range_result.message)
-                return
+        numbers = [int(x) for x in guess_input.split()]
+        
+        range_result = self.validator.validate_number_range(numbers)
+        if not range_result.is_valid:
+            logger.warning("Numbers out of valid range: %s", numbers)
+            print(range_result.message)
+            return
 
-            # If all validation passes, make the guess
-            self.game.make_guess(Guess(numbers))
-            
-        except ValueError:
-            print("Error processing numbers. Please try again.")
+        # If all validation passes, make the guess
+        self.game.make_guess(Guess(numbers))
+        logger.info("Valid guess processed: %s", numbers)
+
             
     def _display_game_state(self) -> None:
         """
@@ -146,8 +168,8 @@ class GameInterface:
         for record in guess_records:
             print(f"Player guesses \"{record[0]}\", {record[1]}")
 
-            
         print(f"\nAttempts remaining: {attempts_left}\n")
+        logger.debug("Game state displayed - Attempts left: %d", attempts_left)
             
     def _display_game_result(self) -> None:
         """
@@ -157,6 +179,9 @@ class GameInterface:
         - Win/loss message
         - The secret code pattern (if the player lost)
         """
+        status = self.game.get_status()
+        logger.info("Game ended with status: %s", status)
+        
         print("\n========= Game Over =========")
         if self.game.get_status() == GameStatus.WON:
             print("Congrats! You win the game!")
@@ -182,4 +207,6 @@ class GameInterface:
                 print(selection_result.message)
                 continue
                 
-            return Difficulty.NORMAL if choice == "1" else Difficulty.HARD
+            difficulty = Difficulty.NORMAL if choice == "1" else Difficulty.HARD
+            logger.info("Difficulty selected: %s", difficulty)
+            return difficulty
