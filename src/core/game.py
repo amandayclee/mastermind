@@ -137,7 +137,7 @@ class Game:
         """
         return self.config.max_attempts - self.attempts
    
-    def make_guess(self, guess: Guess) -> Feedback:
+    def make_guess(self, guess: Guess) -> None:
         """
         Processes a player's guess and updates game state.
         
@@ -151,8 +151,6 @@ class Game:
         Args:
             guess (Guess): The player's guess to evaluate
             
-        Returns:
-            Feedback: Information about correct numbers and positions
         """
         logger.info(f"Processing guess: {guess}")
     
@@ -164,6 +162,7 @@ class Game:
     
         self._update_game_state(feedback)    
         self._save_current_state()
+
         
     def _update_game_state(self, feedback: Feedback) -> None:
         """

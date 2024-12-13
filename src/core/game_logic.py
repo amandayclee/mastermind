@@ -44,7 +44,7 @@ class GameLogic:
         
         try:
             code_pattern = generator.generate(self.config)
-            logger.info("Code pattern generated successfully")
+            logger.info("Code pattern generated successfully with length %d", len(code_pattern))
             return code_pattern
         except GeneratorError as e:
             logger.error(f"Failed to generate code pattern: {e}")
@@ -64,22 +64,24 @@ class GameLogic:
         pattern_count = {}
         for num in code_pattern:
             pattern_count[num] = pattern_count.get(num, 0) + 1
+            
+        logger.debug("Pattern frequency map calculated: %s", pattern_count)
         return pattern_count
     
     def check_guess(self, guess: Guess, pattern_count: Dict[int, int], code_pattern: List[int]) -> Feedback:
         """
-        Compares the guess against the code pattern and generates feedback indicating
-        the number of correct digits (right number, wrong position) and correct positions
-        (right number, right position).
+        Compares a guess against the code pattern and generates feedback.
         
         Args:
-            guess (Guess): The player's guess containing the numbers to check.
-            pattern_count (Dict[int, int]): Frequency map of numbers in code pattern.
-            code_pattern (List[int]): The secret code pattern to compare against.
+            guess: The player's guess to evaluate
+            pattern_count: Frequency map of numbers in code pattern
+            code_pattern: The secret code pattern to compare against
             
         Returns:
-            Feedback: Object containing the number of correct digits and positions.
+            Feedback about correct numbers and positions
         """
+        logger.debug("Checking guess %s against pattern", guess.get_numbers())
+        
         guess_numbers = guess.get_numbers()
         current_pattern_count = pattern_count.copy()
         
@@ -94,5 +96,8 @@ class GameLogic:
             if guess_num in current_pattern_count and current_pattern_count[guess_num] > 0:
                 correct_number += 1
                 current_pattern_count[guess_num] -= 1
-        
+                
+        logger.debug("Feedback generated: numbers=%d, positions=%d", 
+            correct_number, correct_location)
+
         return Feedback(correct_number, correct_location)

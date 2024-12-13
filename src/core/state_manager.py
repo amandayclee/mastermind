@@ -28,6 +28,8 @@ class StateManager:
             game_state: Current state of the game to be saved
         """
         self.repository.save_game(game_state)
+        logger.info("Saving game state - ID: %s, Status: %s, Attempts: %d",
+                       game_state.game_id, game_state.status, game_state.attempts)
         
     def load_state(self, game_id: str) -> Optional[GameStatus]:
         """
@@ -44,7 +46,10 @@ class StateManager:
         """
         state = self.repository.load_game(game_id)
         if not state:
-            logger.error(f"Game {game_id} not found")
+            logger.error("Game %s not found", game_id)
             raise GameNotFoundError(game_id)
+        
+        logger.info("Game state loaded - Status: %s, Attempts: %d",
+                   state.status, state.attempts)
         return state
     

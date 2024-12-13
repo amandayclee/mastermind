@@ -1,9 +1,5 @@
-import logging
-
 from src.core.models.game_difficulty import Difficulty
 
-
-logger = logging.getLogger(__name__)
 
 class GameConfig():
     """
