@@ -83,21 +83,25 @@ class SQLiteGameRepository(GameRepository):
             connection = sqlite3.connect(self._db_name)
             data = game_state.to_db_format()
             
-            connection.execute("""
-                INSERT OR REPLACE INTO games (
-                    game_id, code_pattern, status, attempts,
-                    guess_records, created_at, updated_at, config
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                data["game_id"],
-                json.dumps(data["code_pattern"]),
-                data["status"],
-                data["attempts"],
-                json.dumps(data["guess_records"]),
-                data["created_at"],
-                data["updated_at"],
-                json.dumps(data["config"])
-            ))
+            try:
+                connection.execute("""
+                    INSERT OR REPLACE INTO games (
+                        game_id, code_pattern, status, attempts,
+                        guess_records, created_at, updated_at, config
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    data["game_id"],
+                    json.dumps(data["code_pattern"]),
+                    data["status"],
+                    data["attempts"],
+                    json.dumps(data["guess_records"]),
+                    data["created_at"],
+                    data["updated_at"],
+                    json.dumps(data["config"])
+                ))
+            except TypeError as e:
+                logger.error("Failed to save the state %s: %s", game_state.game_id, str(e))
+                raise SaveError(f"Invalid game state data: {str(e)}")
             
             connection.commit()
             logger.debug("Game state saved successfully")
