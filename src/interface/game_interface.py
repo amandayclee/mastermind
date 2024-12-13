@@ -43,12 +43,25 @@ class GameInterface:
                 print("Keep this ID if you want to continue this game later!\n")
                 self.run_game()
             elif choice == "2":
-                game_id = input("Enter your game ID: ")
-                try:
-                    self.game = Game(repository=self.repository, game_id=game_id)
-                    self.run_game()
-                except GameNotFoundError as e:
-                    raise
+                while True:
+                        game_id = input("Enter your game ID (or 'exit' to return to menu): ").strip()
+                        
+                        if game_id.lower() == 'exit':
+                            print("Returning to main menu...\n")
+                            break
+                            
+                        if not game_id:
+                            print("Game ID cannot be empty. Please enter a valid game ID.\n")
+                            continue
+                            
+                        try:
+                            self.game = Game(repository=self.repository, game_id=game_id)
+                            self.run_game()
+                            break
+                            
+                        except GameNotFoundError:
+                            print(f"Game with ID '{game_id}' not found.\n")
+                            print("Please try again or type 'exit' to return to the main menu.\n")
             elif choice == "3":
                 print("Thanks for playing!")
                 break
@@ -65,7 +78,7 @@ class GameInterface:
         
         while self.game.get_status() == GameStatus.IN_PROGRESS:
             self._display_game_state()
-            guess_input = input("Please enter 4 numbers with each number is between 0 and 7:\n")
+            guess_input = input(f"Please enter {self.game.config.pattern_length} numbers with each number is between {self.game.config.min_number} and {self.game.config.max_number}:\n")
             
             if guess_input == 'id':
                 print(f"\nYour game ID is: {self.game.game_id}")
