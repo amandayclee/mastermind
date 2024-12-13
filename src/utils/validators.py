@@ -63,12 +63,7 @@ class InputValidator:
                 message="Input cannot be empty",
                 error_code="EMPTY_INPUT"
             )
-            
-        if " " in guess_input:
-            numbers = guess_input.split()
-        else:
-            numbers = list(guess_input)
-
+        
         if not all(c.isdigit() or c.isspace() for c in guess_input):
             return ValidationResult(
                 is_valid=False,
@@ -76,7 +71,7 @@ class InputValidator:
                 error_code="NON_NUMERIC"
             )
 
-        if len(numbers) != self.config.pattern_length:
+        if len(guess_input) != self.config.pattern_length:
             return ValidationResult(
                 is_valid=False,
                 message=f"Must enter exactly {self.config.pattern_length} numbers",
@@ -85,6 +80,24 @@ class InputValidator:
             
         logger.debug("Guess input format validation successful")
         return ValidationResult(is_valid=True)
+    
+    def parse_guess_input(self, guess_input: str) -> List[int]:
+        """
+        Converts validated input into numbers.
+        
+        Args:
+            guess_input: Raw string input from user
+            
+        Returns:
+            List[int] format of guess.
+        """
+        if " " in guess_input:
+            numbers = guess_input.split()
+        else:
+            numbers = list(guess_input)
+            
+        logger.debug("Prase Guess input successful")
+        return [int(_) for _ in numbers]
     
     def validate_number_range(self, numbers: List[int]) -> ValidationResult:
         """

@@ -131,13 +131,14 @@ class GameInterface:
             guess_input (str): The user's input string containing their guess
 
         """
+        
         format_result = self.validator.validate_guess_input(guess_input)
         if not format_result.is_valid:
             logger.warning("Invalid guess format: %s", guess_input)
             print(format_result.message)
             return
-
-        numbers = [int(x) for x in guess_input.split()]
+        
+        numbers = self.validator.parse_guess_input(guess_input)
         
         range_result = self.validator.validate_number_range(numbers)
         if not range_result.is_valid:
