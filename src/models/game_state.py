@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Tuple
 
 from src.config.game_config import GameConfig
 from src.models.feedback import Feedback
+from src.models.game_difficulty import Difficulty
 from src.models.guess import Guess
 from src.models.game_status import GameStatus
 
@@ -77,11 +78,8 @@ class GameState:
                 "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
                 "updated_at": self.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
                 "config": {
-                    "pattern_length": self.config.pattern_length,
-                    "max_attempts": self.config.max_attempts,
-                    "min_number": self.config.min_number,
-                    "max_number": self.config.max_number
-                }
+                "difficulty": self.config.difficulty.value
+            }
         }
     
     @classmethod
@@ -108,12 +106,8 @@ class GameState:
             )
             temp_guess_records.append(temp_tuple)
             
-        config = GameConfig(
-            pattern_length=data["config"]["pattern_length"],
-            max_attempts=data["config"]["max_attempts"],
-            min_number=data["config"]["min_number"],
-            max_number=data["config"]["max_number"]
-        )
+        difficulty = Difficulty(data["config"].get("difficulty", Difficulty.NORMAL.value))
+        config = GameConfig(difficulty=difficulty)
         
         return cls(
             game_id = data["game_id"],

@@ -1,9 +1,11 @@
 import logging
+from src.config.game_config import GameConfig
 from src.core.repository.sqlite import SQLiteGameRepository
 from src.core.repository.base import GameRepository
 from src.models.game_status import GameStatus
 from src.core.game.game import Game
 from src.utils.exceptions import GameNotFoundError, GuessError, InvalidLengthError, RangeError
+from src.models.game_difficulty import Difficulty
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +40,8 @@ class GameInterface:
             choice = input("Select an option (1-3): ")
             
             if choice == "1":
-                self.game = Game(repository=self.repository)
+                difficulty = self._select_difficulty()
+                self.game = Game(repository=self.repository, config=GameConfig(difficulty=difficulty))
                 print(f"\nYour game ID is: {self.game.game_id}")
                 print("Keep this ID if you want to continue this game later!\n")
                 self.run_game()
@@ -145,3 +148,23 @@ class GameInterface:
         else:
             print("Game Over! Better luck next time.")
             print(f"The code was: {' '.join(str(n) for n in self.game.get_code_pattern())}")
+            
+    def _select_difficulty(self) -> Difficulty:
+        """
+        Prompt the user to select a difficulty level.
+        
+        Returns:
+            Difficulty: The selected difficulty level
+        """
+        while True:
+            print("\nSelect Difficulty:")
+            print("1. Normal - 4 numbers (0-7), 10 attempts")
+            print("2. Hard - 5 numbers (0-9), 8 attempts")
+            choice = input("Select difficulty (1-2): ")
+            
+            if choice == "1":
+                return Difficulty.NORMAL
+            elif choice == "2":
+                return Difficulty.HARD
+            else:
+                print("Invalid choice. Please select 1 or 2")
