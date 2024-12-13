@@ -1,11 +1,6 @@
 # Mastermind
 A Python implementation of the classic code-breaking game with Random.org API integration.
 
-Game Rules
-- Computer randomly selects 4 different numbers (0-7)
-- Player has 10 attempts to guess the combination
-- After each guess, feedback is provided
-
 ## Getting Started
 ### Prerequisites
 - Python 3.8+
@@ -14,56 +9,104 @@ Game Rules
 ### Installation & Setup
 
 1. Clone the repositor
-```
-git clone https://github.com/amandayclee/mastermind.git
-cd mastermind
-```
+    ```
+    git clone https://github.com/amandayclee/mastermind.git
+    cd mastermind
+    ```
 
 2. Set up virtual environment
-```
-python -m venv venv
-```
+    ```
+    python -m venv venv
+    ```
 
 3. Activate virtual environment
-```
-# On Windows:
-venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
-```
+    ```
+    # On Windows:
+    venv\Scripts\activate
+    ```
+    ```
+    # On macOS/Linux:
+    source venv/bin/activate
+    ```
 
 4. Install dependencies
-```
-pip install -r requirements.txt
-```
+    ```
+    pip install -r requirements.txt
+    ```
 
 5. Run the game
-```
-python main.py
-```
+    ```
+    python main.py
+    ```
 
 6. View the game's test reports
-```
-pytest
-```
+    ```
+    pytest
+    ```
 
 7. View the game's documentation using `pydoc`
-```
-python -m pydoc -b
-```
+    ```
+    python -m pydoc -b
+    ```
 
-### Thought process
-MVP Implementation
-1. Basic game mechanics
-2. API integration
-3. User interface
-4. Error handling
-5. Testing
+## Thought Process for Mastermind  Development
 
-### Code Structure
+### Initial Approach and Design Principles
+After carefully analyzing the challenge, I identified key engineering principles to guide the development:
+
+1. Clean Architecture and SOLID Principles
+    - Applied single responsibility principle for clear component boundaries
+    - Separated concerns into specialized modules for better organization
+    - System Reliability and Error Handling
+
+2. Implemented comprehensive error handling for expected/unexpected failures
+    - Created custom exceptions for clear error identification
+    - Added resilience mechanisms for external API dependencies
+
+3. Security and Validation
+    - Added input validation to protect against invalid/malicious inputs
+    - Created logging system for monitoring and debugging
+
+### Core Requirements Analysis
+I broke down the requirements into two main categories:
+1. Essential Game Mechanics:
+    - Generate a secret 4-digit code using numbers 0-7
+    - Allow players 10 attempts to guess correctly
+    - Provide feedback after each guess
+    - Track game state and determine win/loss conditions
+
+2. Technical Integration:
+    - Integrate with Random.org API for number generation
+
+### Iterative Development Process
+#### First Iteration - MVP
+- Implemented core game logic and basic validation
+- Created simple command-line interface
+- Added fundamental error handling
+- Wrote initial test cases for core functionality
+
+#### Second Iteration - Architecture Refinement
+- `core/`: Separated number generation from game logic
+- `interface/`: Built clean CLI focusing on user interaction
+- `models/`: Simplified design by removing unnecessary player class
+- `utils/`: Added custom exceptions and logging infrastructure
+
+#### Third Iteration - Code Quality
+- Enhanced code readability with type hints
+- Implemented comprehensive logging system
+- Added thorough documentation and comments
+- Improved game state management for better control flow
+
+#### Fourth Iteration - Persistence and Scaling
+- Designed repository pattern for flexible storage
+- Implemented SQLite integration for persistence
+- Updated test suite for new components
+- Enhanced error handling for database operations
+
+#### Fifth Iteration - Web API Implementation
 
 
-## Next Step
+## Future Considerations
 - [ ] Add suppot to give hint
 - [ ] Add a configurable "difficulty level" and adjust the numbers that are used
 - [ ] Extend to multi-player
