@@ -41,7 +41,7 @@ class TestInMemoryRepository:
         
     def test_memory_persistence(self, mock_repository, sample_game_state):
         """
-        Test game storage
+        Test game storage, in memory doesn't have persistence
         """
         mock_repository.save_game(sample_game_state)
         assert sample_game_state.game_id in mock_repository._store
