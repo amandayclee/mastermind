@@ -107,7 +107,6 @@ class RandomOrgGenerator(NumberGenerator):
                 response = requests.get(api_link)
                 response.raise_for_status()
                 code_pattern = [int(_) for _ in response.text.strip("\n").split("\t")]
-                logger.info("Successfully generated numbers from Random.org")
                 
                 logger.info("Successfully generated %d numbers from Random.org",
                     len(code_pattern))
