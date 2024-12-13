@@ -5,7 +5,7 @@ from src.repository.sqlite import SQLiteGameRepository
 from src.repository.base import GameRepository
 from src.core.models.game_status import GameStatus
 from src.core.game import Game
-from src.services.exceptions.exceptions import GameNotFoundError, GuessError, InvalidLengthError, RangeError
+from src.services.exceptions.exceptions import GameNotFoundError
 from src.core.models.game_difficulty import Difficulty
 from src.utils.validators import InputValidator
 
