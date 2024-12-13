@@ -51,10 +51,12 @@ class Game:
         self.game_logic = GameLogic(self.config)
         
         if game_id:
+            logger.info("Loading existing game with ID: %s", game_id)
             state = self.state_manager.load_state(game_id)
             self._restore_state(state)
             
         else:
+            logger.info("Initializing new game")
             self.initialize_new_game(generator)
             self._save_current_state()
   
@@ -69,7 +71,11 @@ class Game:
             generator: Number generator to create secret code
         """
         self.game_id = str(uuid.uuid4())
+        logger.info("Created new game with ID: %s", self.game_id)
+        
         self.code_pattern = self.game_logic.generate_code_pattern(generator)
+        logger.debug("Generated code pattern: %s", self.code_pattern)
+        
         self.pattern_count = self.game_logic.calculate_pattern_counts(self.code_pattern)
         self.status = GameStatus.IN_PROGRESS
         self.attempts = 0
@@ -93,6 +99,7 @@ class Game:
             config=self.config
         )
         self.state_manager.save_state(state)
+        logger.debug("Game state saved for ID: %s", self.game_id)
     
     def get_status(self) -> str:
         """
@@ -129,49 +136,7 @@ class Game:
             int: Number of remaining attempts allowed
         """
         return self.config.max_attempts - self.attempts
-    
-    def validate_guess_input(self, guess_input: str) -> Guess:
-        """
-        Validates and converts a string input into a valid guess.
-        
-        Performs several validation checks:
-        1. Input is not empty
-        2. All characters are numeric
-        3. Length matches the code pattern length
-        4. All numbers are within allowed range
-        
-        Args:
-            guess_input (str): String of numbers from player input
-            
-        Returns:
-            Guess: Valid guess object
-            
-        Raises:
-            GuessError: If input is empty or non-numeric
-            InvalidLengthError: If input length doesn't match code length
-            RangeError: If any number is outside allowed range
-        """
-        if not guess_input.strip():
-            logger.warning("Empty input received")
-            raise GuessError("Input cannot be empty")
-        
-        try:
-            numbers = [int(x) for x in guess_input]
-        except ValueError:
-            logger.warning(f"Non-numeric input received: {guess_input}")
-            raise GuessError("Input must be numbers")
-            
-        if len(numbers) != len(self.code_pattern):
-            logger.warning(f"Invalid length: expected {len(self.code_pattern)}, got {len(numbers)}")
-            raise InvalidLengthError(len(self.code_pattern), len(numbers))
-            
-        for num in numbers:
-            if num < self.config.min_number or num > self.config.max_number:
-                logger.warning(f"INumbers must be between 0 and 7: {guess_input}")
-                raise RangeError(num, self.config.min_number, self.config.max_number)
-                
-        return Guess(numbers)
-    
+   
     def make_guess(self, guess: Guess) -> Feedback:
         """
         Processes a player's guess and updates game state.
@@ -192,6 +157,7 @@ class Game:
         logger.info(f"Processing guess: {guess}")
     
         feedback = self.game_logic.check_guess(guess, self.pattern_count, self.code_pattern)
+        logger.debug("Guess feedback: %s", feedback)
         
         self.guess_records.append((guess, feedback))
         self.attempts += 1
@@ -210,10 +176,15 @@ class Game:
         Args:
             feedback (Feedback): The feedback from the latest guess
         """
+        previous_status = self.status
         if feedback.is_winning_guess(self.config.pattern_length):
             self.status = GameStatus.WON
+            logger.info("Game %s won in %d attempts", self.game_id, self.attempts)
         elif self.attempts >= self.config.max_attempts:
             self.status = GameStatus.LOST
+            
+        if self.status != previous_status:
+            logger.info("Game status changed from %s to %s", previous_status, self.status)
             
     def _restore_state(self, state: GameState) -> None:
         """
@@ -240,3 +211,6 @@ class Game:
         self.pattern_count = {}
         for num in self.code_pattern:
             self.pattern_count[num] = self.pattern_count.get(num, 0) + 1
+            
+        logger.info("Game %s restored - Status: %s, Attempts: %d", 
+                   self.game_id, self.status, self.attempts)
