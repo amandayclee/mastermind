@@ -3,11 +3,11 @@ from datetime import datetime
 import logging
 from typing import Any, Dict, List, Tuple
 
-from src.config.game_config import GameConfig
-from src.models.feedback import Feedback
-from src.models.game_difficulty import Difficulty
-from src.models.guess import Guess
-from src.models.game_status import GameStatus
+from src.core.config.game_config import GameConfig
+from src.core.models.feedback import Feedback
+from src.core.models.game_difficulty import Difficulty
+from src.core.models.guess import Guess
+from src.core.models.game_status import GameStatus
 
 logger = logging.getLogger(__name__)
 

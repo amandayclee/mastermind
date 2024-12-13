@@ -1,10 +1,10 @@
 from datetime import datetime
 import pytest
 
-from src.models.feedback import Feedback
-from src.models.game_status import GameStatus
-from src.models.guess import Guess
-from src.models.game_state import GameState
+from src.core.models.feedback import Feedback
+from src.core.models.game_status import GameStatus
+from src.core.models.guess import Guess
+from src.core.models.game_state import GameState
 
 
 class TestGameState:

@@ -1,9 +1,9 @@
 import logging
 from typing import Dict, List, Tuple
-from src.models.feedback import Feedback
-from src.models.guess import Guess
-from src.core.generators.base import NumberGenerator
-from src.config.game_config import GameConfig
+from src.core.models.feedback import Feedback
+from src.core.models.guess import Guess
+from src.services.generators.base import NumberGenerator
+from src.core.config.game_config import GameConfig
 from src.services.exceptions.exceptions import GameInitError, GeneratorError
 
 logger = logging.getLogger(__name__)

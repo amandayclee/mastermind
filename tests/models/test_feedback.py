@@ -1,5 +1,5 @@
 import pytest
-from src.models.feedback import Feedback
+from src.core.models.feedback import Feedback
 
 
 def test_basic_initialization():

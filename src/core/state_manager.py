@@ -1,8 +1,8 @@
 import logging
 from typing import Optional
-from src.core.repository.base import GameRepository
-from src.models.game_state import GameState
-from src.models.game_status import GameStatus
+from src.repository.base import GameRepository
+from src.core.models.game_state import GameState
+from src.core.models.game_status import GameStatus
 from src.services.exceptions.exceptions import GameNotFoundError
 
 logger = logging.getLogger(__name__)

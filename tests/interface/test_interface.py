@@ -2,7 +2,7 @@ from datetime import datetime
 from unittest.mock import Mock, call, patch
 import pytest
 
-from src.models.game_status import GameStatus
+from src.core.models.game_status import GameStatus
 from src.interface.game_interface import GameInterface
 
 class TestGameInterface:
@@ -33,7 +33,7 @@ class TestGameInterface:
     def test_start_menu_new_game(self, mock_print, mock_input, mock_interface, mock_game):
         """Test starting a new game from menu."""
         mock_input.side_effect = ['1', 'exit', '3']
-        with patch('src.core.game.game.Game', return_value=mock_game):
+        with patch('src.core.game.Game', return_value=mock_game):
             mock_interface.start_menu()
             
         assert mock_print.mock_calls[:4] == [

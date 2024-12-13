@@ -1,8 +1,8 @@
 from unittest.mock import Mock
 import pytest
-from src.core.repository.base import GameRepository
-from src.models.guess import Guess
-from src.config.game_config import GameConfig
+from src.repository.base import GameRepository
+from src.core.models.guess import Guess
+from src.core.config.game_config import GameConfig
 
 @pytest.fixture
 def game_config():

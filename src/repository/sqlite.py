@@ -2,8 +2,8 @@ import json
 import logging
 import sqlite3
 from typing import Optional
-from src.models.game_state import GameState
-from src.core.repository.base import GameRepository
+from src.core.models.game_state import GameState
+from src.repository.base import GameRepository
 from src.services.exceptions.exceptions import DatabaseError, GameNotFoundError, LoadError, SaveError
 
 logger = logging.getLogger(__name__)

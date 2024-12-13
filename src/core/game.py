@@ -2,17 +2,17 @@ from datetime import datetime
 import logging
 from typing import List, Optional, Tuple
 import uuid
-from src.config.game_config import GameConfig
-from src.core.generators.random_org import RandomOrgGenerator
-from src.core.repository.memory import InMemoryGameRepository
-from src.models.feedback import Feedback
-from src.models.game_state import GameState
-from src.models.game_status import GameStatus
-from src.models.guess import Guess
-from src.core.game.game_logic import GameLogic
-from src.core.game.state_manager import StateManager
-from src.core.generators.base import NumberGenerator
-from src.core.repository.base import GameRepository
+from src.core.config.game_config import GameConfig
+from src.services.generators.random_org import RandomOrgGenerator
+from src.repository.memory import InMemoryGameRepository
+from src.core.models.feedback import Feedback
+from src.core.models.game_state import GameState
+from src.core.models.game_status import GameStatus
+from src.core.models.guess import Guess
+from src.core.game_logic import GameLogic
+from src.core.state_manager import StateManager
+from src.services.generators.base import NumberGenerator
+from src.repository.base import GameRepository
 from src.services.exceptions.exceptions import GuessError, InvalidLengthError, RangeError
 
 logger = logging.getLogger(__name__)

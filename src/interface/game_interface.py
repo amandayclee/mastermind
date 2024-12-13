@@ -1,11 +1,13 @@
 import logging
-from src.config.game_config import GameConfig
-from src.core.repository.sqlite import SQLiteGameRepository
-from src.core.repository.base import GameRepository
-from src.models.game_status import GameStatus
-from src.core.game.game import Game
+from src.core.config.game_config import GameConfig
+from src.core.models.guess import Guess
+from src.repository.sqlite import SQLiteGameRepository
+from src.repository.base import GameRepository
+from src.core.models.game_status import GameStatus
+from src.core.game import Game
 from src.services.exceptions.exceptions import GameNotFoundError, GuessError, InvalidLengthError, RangeError
-from src.models.game_difficulty import Difficulty
+from src.core.models.game_difficulty import Difficulty
+from src.utils.validators import InputValidator
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +22,7 @@ class GameInterface:
         """
         self.game = None
         self.repository = repository
+        self.validator = InputValidator(GameConfig())
         
     def start_menu(self) -> None:
         """
@@ -41,7 +44,9 @@ class GameInterface:
             
             if choice == "1":
                 difficulty = self._select_difficulty()
-                self.game = Game(repository=self.repository, config=GameConfig(difficulty=difficulty))
+                config = GameConfig(difficulty=difficulty)
+                self.validator = InputValidator(config)
+                self.game = Game(repository=self.repository, config=config)
                 print(f"\nYour game ID is: {self.game.game_id}")
                 print("Keep this ID if you want to continue this game later!\n")
                 self.run_game()
@@ -53,15 +58,16 @@ class GameInterface:
                             print("Returning to main menu...\n")
                             break
                             
-                        if not game_id:
-                            print("Game ID cannot be empty. Please enter a valid game ID.\n")
+                        id_result = self.validator.validate_game_id(game_id)
+                        if not id_result.is_valid:
+                            print(id_result.message)
                             continue
-                            
+                        
                         try:
                             self.game = Game(repository=self.repository, game_id=game_id)
+                            self.validator.update_config(self.game.config)
                             self.run_game()
-                            break
-                            
+                            break  
                         except GameNotFoundError:
                             print(f"Game with ID '{game_id}' not found.\n")
                             print("Please try again or type 'exit' to return to the main menu.\n")
@@ -91,27 +97,36 @@ class GameInterface:
                 print("Use this ID to continue your game later!")
                 return
             
-            self.process_user_input(guess_input)
+            self.process_guess_input(guess_input)
                             
         self._display_game_result()
             
-    def process_user_input(self, guess_input: str) -> None:
+    def process_guess_input(self, guess_input: str) -> None:
         """
         Process and validate user's guess input.
         
         Args:
             guess_input (str): The user's input string containing their guess
-            
-        The method handles validation and error display for:
-        - Input format
-        - Number range
-        - Input length
+
         """
+        format_result = self.validator.validate_guess_input(guess_input)
+        if not format_result.is_valid:
+            print(format_result.message)
+            return
+
         try:
-            valid_guess = self.game.validate_guess_input(guess_input)
-            self.game.make_guess(valid_guess)
-        except (GuessError, InvalidLengthError, RangeError) as e:
-            print(f"{e.get_message()}")
+            numbers = [int(x) for x in guess_input.split()]
+            
+            range_result = self.validator.validate_number_range(numbers)
+            if not range_result.is_valid:
+                print(range_result.message)
+                return
+
+            # If all validation passes, make the guess
+            self.game.make_guess(Guess(numbers))
+            
+        except ValueError:
+            print("Error processing numbers. Please try again.")
             
     def _display_game_state(self) -> None:
         """
@@ -162,9 +177,9 @@ class GameInterface:
             print("2. Hard - 5 numbers (0-9), 8 attempts")
             choice = input("Select difficulty (1-2): ")
             
-            if choice == "1":
-                return Difficulty.NORMAL
-            elif choice == "2":
-                return Difficulty.HARD
-            else:
-                print("Invalid choice. Please select 1 or 2")
+            selection_result = self.validator.validate_difficulty_selection(choice)
+            if not selection_result.is_valid:
+                print(selection_result.message)
+                continue
+                
+            return Difficulty.NORMAL if choice == "1" else Difficulty.HARD

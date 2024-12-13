@@ -1,6 +1,6 @@
 import logging
 
-from src.models.game_difficulty import Difficulty
+from src.core.models.game_difficulty import Difficulty
 
 
 logger = logging.getLogger(__name__)

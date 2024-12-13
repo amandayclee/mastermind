@@ -1,5 +1,5 @@
 import pytest
-from src.models.guess import Guess
+from src.core.models.guess import Guess
 
 class TestGuess:
     def test_guess_initialization(self):

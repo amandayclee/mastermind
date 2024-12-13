@@ -1,9 +1,9 @@
 from unittest.mock import Mock
 import pytest
 
-from src.models.guess import Guess
-from src.config.game_config import GameConfig
-from src.core.game.game_logic import GameLogic
+from src.core.models.guess import Guess
+from src.core.config.game_config import GameConfig
+from src.core.game_logic import GameLogic
 from src.services.exceptions.exceptions import GameInitError, GeneratorError
 
 class TestGameLogic:

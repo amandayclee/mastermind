@@ -1,9 +1,9 @@
 from unittest.mock import Mock
 import pytest
 
-from src.core.game.game import Game
-from src.models.guess import Guess
-from src.models.game_status import GameStatus
+from src.core.game import Game
+from src.core.models.guess import Guess
+from src.core.models.game_status import GameStatus
 
 class TestGameStatus:
     @pytest.fixture

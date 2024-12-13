@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from src.models.game_state import GameState
-from src.models.game_status import GameStatus
+from src.core.models.game_state import GameState
+from src.core.models.game_status import GameStatus
 
 
 class GameRepository(ABC):

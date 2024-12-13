@@ -1,12 +1,12 @@
 import pytest
 from unittest.mock import Mock
-from src.core.game.game import Game
-from src.core.game.game_logic import GameLogic
-from src.core.game.state_manager import StateManager
-from src.models.guess import Guess
-from src.models.feedback import Feedback
+from src.core.game import Game
+from src.core.game_logic import GameLogic
+from src.core.state_manager import StateManager
+from src.core.models.guess import Guess
+from src.core.models.feedback import Feedback
 from src.services.exceptions.exceptions import GuessError, InvalidLengthError, RangeError
-from src.models.game_status import GameStatus
+from src.core.models.game_status import GameStatus
 
 
 class TestGame:
