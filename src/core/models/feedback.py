@@ -17,8 +17,9 @@ class Feedback:
         self.numbers_correct = numbers_correct
         self.positions_correct = positions_correct
         
-        logger.debug(f"Created new Feedback instance: {self}")
-    
+        logger.debug("Created feedback - Numbers correct: %d, Positions correct: %d",
+                    numbers_correct, positions_correct)
+        
     def is_winning_guess(self, code_length: int) -> bool:
         """
         Determine if the current feedback represents a winning guess, where it get the number of correct locations equals to the length of  the code pattern.

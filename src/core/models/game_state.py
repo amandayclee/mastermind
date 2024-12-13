@@ -56,7 +56,8 @@ class GameState:
         Returns:
             Dict[str, Any]: Database-friendly representation of the game state
         """
-        logger.debug(f"Converting game {self.game_id} to database format")
+        logger.debug("Converting game state to database format - ID: %s, Status: %s, Attempts: %d",
+                    self.game_id, self.status, self.attempts)
         
         temp_guess_records = []
         for guess, feedback in self.guess_records:
@@ -68,6 +69,9 @@ class GameState:
                 }
             }
             temp_guess_records.append(temp_dict)
+        
+        logger.debug("Successfully converted game state to database format - Records count: %d",
+                    len(temp_guess_records))
         
         return {
                 "game_id": self.game_id,
@@ -95,8 +99,8 @@ class GameState:
         Returns:
             GameState: A new GameState instance representing the stored game
         """
-        logger.debug(f"Reconstructing game state from database format for game {data.get('game_id')}")
-        
+        logger.debug("Reconstructing game state - ID: %s, Status: %s, Records: %d",
+                    data.get('game_id'), data.get('status'), len(data.get('guess_records', [])))
         temp_guess_records = []
         
         for record in data["guess_records"]:
@@ -108,6 +112,8 @@ class GameState:
             
         difficulty = Difficulty(data["config"].get("difficulty", Difficulty.NORMAL.value))
         config = GameConfig(difficulty=difficulty)
+        
+        logger.debug("Successfully reconstructed game state for ID: %s", game_id)
         
         return cls(
             game_id = data["game_id"],

@@ -14,7 +14,7 @@ class Guess:
             numbers (List[int]): The sequence of numbers for this guess
         """
         self.numbers = numbers
-        logger.debug(f"Created new guess: {self}")
+        logger.debug("Created new guess with numbers: %s", self)
     
     def get_numbers(self) -> list[int]:
         """
