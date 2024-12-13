@@ -113,7 +113,7 @@ class GameState:
         difficulty = Difficulty(data["config"].get("difficulty", Difficulty.NORMAL.value))
         config = GameConfig(difficulty=difficulty)
         
-        logger.debug("Successfully reconstructed game state for ID: %s", game_id)
+        logger.debug("Successfully reconstructed game state for ID: %s", data.get('game_id'))
         
         return cls(
             game_id = data["game_id"],
