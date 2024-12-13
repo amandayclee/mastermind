@@ -26,6 +26,7 @@ class SQLiteGameRepository(GameRepository):
             DatabaseConnectionError: If database initialization fails
         """
         self._db_name = db_name
+        logger.info("Initializing SQLite repository with database: %s", db_name)
         self._create_table() 
     
     def _create_table(self):
@@ -38,6 +39,7 @@ class SQLiteGameRepository(GameRepository):
         connection = None
         
         try:
+            logger.debug("Attempting to create games table")
             connection = sqlite3.connect(self._db_name)
             connection.execute("""
                 CREATE TABLE IF NOT EXISTS games (
@@ -52,8 +54,10 @@ class SQLiteGameRepository(GameRepository):
                 )
             """)
             connection.commit()
+            logger.info("Games table created successfully")
             
         except sqlite3.Error as e:
+            logger.error("Failed to create table: %s", str(e))
             raise DatabaseError(f"Cannot create initial table: {str(e)}")
 
         finally:
@@ -74,6 +78,8 @@ class SQLiteGameRepository(GameRepository):
         connection = None
         
         try: 
+            logger.debug("Saving game state - ID: %s, Status: %s, Attempts: %d",
+                        game_state.game_id, game_state.status, game_state.attempts)
             connection = sqlite3.connect(self._db_name)
             data = game_state.to_db_format()
             
@@ -94,8 +100,10 @@ class SQLiteGameRepository(GameRepository):
             ))
             
             connection.commit()
+            logger.debug("Game state saved successfully")
             
         except sqlite3.Error as e:
+            logger.error("Failed to save game %s: %s", game_state.game_id, str(e))
             if connection:
                 connection.rollback()
             raise SaveError(f"Cannot save the game: {str(e)}")
@@ -132,6 +140,7 @@ class SQLiteGameRepository(GameRepository):
             game_data = cursor.fetchone()
             
             if game_data is None:
+                logger.warning("Game not found - ID: %s", game_id)
                 raise GameNotFoundError(game_id)
 
             data = {
@@ -144,10 +153,12 @@ class SQLiteGameRepository(GameRepository):
                 "updated_at": game_data[5],
                 "config": json.loads(game_data[6])
             }
-
+            
+            logger.debug("Game state loaded successfully")
             return GameState.from_db_format(data)
         
         except sqlite3.Error as e:
+            logger.error("Failed to load game %s: %s", game_id, str(e))
             raise LoadError()
         
         finally:
