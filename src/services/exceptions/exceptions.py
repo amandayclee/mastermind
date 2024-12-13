@@ -14,20 +14,12 @@ class GameError(Exception, ABC):
         message (str): Human-readable error message
     """
     def __init__(self, message: str):
-        self.message = message
+        logger.error("Game error occurred: %s", message)
         super().__init__(message)
-        
-    def get_message(self) -> str:
-        """Get the error message."""
-        return self.message
 
 class GeneratorError(GameError):
     def __init__(self, message: str = "Generator error occurred"):
-        self.message = message
         super().__init__(message)
-    
-    def get_message(self) -> str:
-        return self.message
     
 class GameInitError(GameError):
     """Error raised when number generation fails."""
@@ -42,28 +34,23 @@ class GameNotFoundError(GameError):
         game_id (str): ID of the game that couldn't be found
     """
     def __init__(self, game_id: str):
-        self.message = f"Game {game_id} not found"
-        super().__init__(self.message)
+        message = f"Game {game_id} not found"
+        logger.error("Game lookup failed: %s", self.message)
+        super().__init__(message)
     
-    def get_message(self) -> str:
-        return self.message
 
 class DatabaseError(GameError):
     """
     Base class for all database-related errors.
-    
-    Attributes:
-        message (str): Human-readable error message
     """
-    def __init__(self, message: str):
-        self.message = message
-        super().__init__(message)
+    pass
         
 class SaveError(DatabaseError):
     """
     Error raised when database save fails.
     """
     def __init__(self, message: str = "Failed to save the game to database"):
+        logger.error("Game save failed: %s", message)
         super().__init__(message)
         
 class LoadError(DatabaseError):
@@ -71,4 +58,5 @@ class LoadError(DatabaseError):
     Error raised when database storage fails.
     """
     def __init__(self, message: str = "Failed to load the game to database"):
+        logger.error("Game load failed: %s", message)
         super().__init__(message)
