@@ -35,7 +35,7 @@ class GameNotFoundError(GameError):
     """
     def __init__(self, game_id: str):
         message = f"Game {game_id} not found"
-        logger.error("Game lookup failed: %s", self.message)
+        logger.error("Game lookup failed: %s", message)
         super().__init__(message)
     
 
