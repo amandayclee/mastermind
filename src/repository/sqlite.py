@@ -112,7 +112,7 @@ class SQLiteGameRepository(GameRepository):
             if connection:
                     connection.close()
                 
-    def load_game(self, game_id: str) -> Optional[GameState]:
+    def load_game(self, game_id: str) -> GameState:
         """
         Load a game state from the database by its ID.
         

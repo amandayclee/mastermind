@@ -44,12 +44,11 @@ class StateManager:
         Raises:
             GameNotFoundError: If no game exists with the given ID
         """
-        state = self.repository.load_game(game_id)
-        if not state:
+        try:
+            state = self.repository.load_game(game_id)
+            logger.info("Game state loaded - Status: %s, Attempts: %d",
+                    state.status, state.attempts)
+            return state
+        except GameNotFoundError:
             logger.error("Game %s not found", game_id)
-            raise GameNotFoundError(game_id)
-        
-        logger.info("Game state loaded - Status: %s, Attempts: %d",
-                   state.status, state.attempts)
-        return state
-    
+            raise 

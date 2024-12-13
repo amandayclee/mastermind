@@ -3,6 +3,8 @@ from src.core.models.game_state import GameState
 from src.repository.base import GameRepository
 import logging
 
+from src.services.exceptions.exceptions import GameNotFoundError
+
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +34,7 @@ class InMemoryGameRepository(GameRepository):
         logger.debug("Game state saved successfully")
     
     
-    def load_game(self, game_id: str) -> Optional[GameState]:
+    def load_game(self, game_id: str) -> GameState:
         """
         Load a game state from in memory by its ID.
         
@@ -46,7 +48,7 @@ class InMemoryGameRepository(GameRepository):
         
         if stored_data is None:
             logger.warning("Game not found - ID: %s", game_id)
-            return None
+            raise GameNotFoundError(game_id)
             
         logger.debug("Game state loaded successfully")
         return GameState.from_db_format(stored_data)
