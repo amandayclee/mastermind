@@ -4,7 +4,7 @@ from src.models.feedback import Feedback
 from src.models.guess import Guess
 from src.core.generators.base import NumberGenerator
 from src.config.game_config import GameConfig
-from src.utils.exceptions import GameInitError, GeneratorError
+from src.services.exceptions.exceptions import GameInitError, GeneratorError
 
 logger = logging.getLogger(__name__)
 

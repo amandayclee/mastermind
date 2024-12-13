@@ -4,7 +4,7 @@ from src.core.repository.sqlite import SQLiteGameRepository
 from src.core.repository.base import GameRepository
 from src.models.game_status import GameStatus
 from src.core.game.game import Game
-from src.utils.exceptions import GameNotFoundError, GuessError, InvalidLengthError, RangeError
+from src.services.exceptions.exceptions import GameNotFoundError, GuessError, InvalidLengthError, RangeError
 from src.models.game_difficulty import Difficulty
 
 logger = logging.getLogger(__name__)

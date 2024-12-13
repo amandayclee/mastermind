@@ -2,7 +2,7 @@ import pytest
 import requests
 from unittest.mock import patch, Mock
 from src.core.generators.random_org import RandomOrgGenerator
-from src.utils.exceptions import GeneratorError
+from src.services.exceptions.exceptions import GeneratorError
 
 class TestRandomGenerator:
     @pytest.fixture

@@ -5,7 +5,7 @@ from src.core.game.game_logic import GameLogic
 from src.core.game.state_manager import StateManager
 from src.models.guess import Guess
 from src.models.feedback import Feedback
-from src.utils.exceptions import GuessError, InvalidLengthError, RangeError
+from src.services.exceptions.exceptions import GuessError, InvalidLengthError, RangeError
 from src.models.game_status import GameStatus
 
 

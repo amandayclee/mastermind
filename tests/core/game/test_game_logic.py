@@ -4,7 +4,7 @@ import pytest
 from src.models.guess import Guess
 from src.config.game_config import GameConfig
 from src.core.game.game_logic import GameLogic
-from src.utils.exceptions import GameInitError, GeneratorError
+from src.services.exceptions.exceptions import GameInitError, GeneratorError
 
 class TestGameLogic:
     @pytest.fixture

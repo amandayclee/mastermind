@@ -4,7 +4,7 @@ import sqlite3
 from typing import Optional
 from src.models.game_state import GameState
 from src.core.repository.base import GameRepository
-from src.utils.exceptions import DatabaseError, GameNotFoundError, LoadError, SaveError
+from src.services.exceptions.exceptions import DatabaseError, GameNotFoundError, LoadError, SaveError
 
 logger = logging.getLogger(__name__)
 

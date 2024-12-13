@@ -2,7 +2,7 @@ import logging
 import random
 from typing import Dict, List
 from src.config.game_config import GameConfig
-from src.utils.exceptions import GeneratorError
+from src.services.exceptions.exceptions import GeneratorError
 from .base import NumberGenerator
 import requests
 

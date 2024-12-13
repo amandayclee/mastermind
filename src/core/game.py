@@ -13,7 +13,7 @@ from src.core.game.game_logic import GameLogic
 from src.core.game.state_manager import StateManager
 from src.core.generators.base import NumberGenerator
 from src.core.repository.base import GameRepository
-from src.utils.exceptions import GuessError, InvalidLengthError, RangeError
+from src.services.exceptions.exceptions import GuessError, InvalidLengthError, RangeError
 
 logger = logging.getLogger(__name__)
 

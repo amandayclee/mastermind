@@ -3,7 +3,7 @@ from typing import Optional
 from src.core.repository.base import GameRepository
 from src.models.game_state import GameState
 from src.models.game_status import GameStatus
-from src.utils.exceptions import GameNotFoundError
+from src.services.exceptions.exceptions import GameNotFoundError
 
 logger = logging.getLogger(__name__)
 
