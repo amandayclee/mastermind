@@ -4,6 +4,7 @@ import pytest
 
 from src.core.models.game_difficulty import Difficulty
 from src.core.models.game_status import GameStatus
+from src.core.models.guess import Guess
 from src.core.state_manager import StateManager
 from src.interface.game_interface import GameInterface
 from src.services.exceptions.exceptions import GameNotFoundError
@@ -51,6 +52,21 @@ class TestGameInterface:
         mock_input.side_effect = ["4", "3"]
         mock_interface.start_menu()
         mock_print.assert_any_call("Invalid choice. Please select 1, 2, or 3")
+
+    @patch('builtins.input')
+    @patch('builtins.print')
+    def test_load_game_success(self, mock_print, mock_input, mock_interface, mock_game):
+        """
+        Test loading an existing game successfully
+        """
+        mock_input.side_effect = ["2", str(mock_game.game_id), "exit", "3"]
+        mock_interface.validator.validate_game_id = Mock(return_value=Mock(is_valid=True))
+        mock_interface.repository.load_game.return_value = mock_game
+        mock_interface.run_game = Mock()
+        
+        mock_interface.start_menu()
+        
+        mock_interface.run_game.assert_called_once()
 
     @patch('builtins.input')
     @patch('builtins.print')
@@ -110,9 +126,8 @@ class TestGameInterface:
             
         mock_print.assert_any_call("Game with ID 'wrong-uuid' not found.\n")
         
-    @patch('builtins.input')
     @patch('builtins.print')
-    def test_process_guess_input_invalid_format(self, mock_print, mock_input, mock_interface, mock_game):
+    def test_process_guess_input_invalid_format(self, mock_print, mock_interface, mock_game):
         """
         Test invalid guess format
         """
@@ -121,9 +136,8 @@ class TestGameInterface:
         mock_interface.process_guess_input("abc")
         mock_print.assert_called_with("Invalid format")
         
-    @patch('builtins.input')
     @patch('builtins.print')
-    def test_process_guess_input_out_of_range(self, mock_print, mock_input, mock_interface, mock_game):
+    def test_process_guess_input_out_of_range(self, mock_print, mock_interface, mock_game):
         """
         Test guess numbers out of valid range
         """
@@ -134,9 +148,22 @@ class TestGameInterface:
         mock_interface.process_guess_input("9999")
         mock_print.assert_called_with("Numbers out of range")
         
-    @patch('builtins.input')
     @patch('builtins.print')
-    def test_display_game_result_win(self, mock_print, mock_input, mock_interface, mock_game):
+    def test_process_valid_guess(self, mock_print, mock_interface, mock_game):
+        """
+        Test processing a valid guess input
+        """
+        mock_interface.validator.validate_guess_input = Mock(return_value=Mock(is_valid=True))
+        mock_interface.validator.parse_guess_input = Mock(return_value=[1, 2, 3, 4])
+        mock_interface.validator.validate_number_range = Mock(return_value=Mock(is_valid=True))
+        mock_interface.game = mock_game
+        
+        mock_interface.process_guess_input("1234")
+    
+        mock_game.make_guess.assert_called_once()
+        
+    @patch('builtins.print')
+    def test_display_game_result_win(self, mock_print, mock_interface, mock_game):
         """
         Test displaying win game result
         """
@@ -144,3 +171,17 @@ class TestGameInterface:
         mock_interface.game = mock_game
         mock_interface._display_game_result()
         mock_print.assert_any_call("Congrats! You win the game!")
+        
+    @patch('builtins.print')
+    def test_display_game_result_loss(self, mock_print, mock_interface, mock_game):
+        """
+        Test displaying lose game result
+        """
+        mock_game.get_status.return_value = GameStatus.LOST
+        mock_game.get_code_pattern.return_value = [1, 2, 3, 4]
+        mock_interface.game = mock_game
+        
+        mock_interface._display_game_result()
+        
+        mock_print.assert_any_call("Game Over! Better luck next time.")
+        mock_print.assert_any_call("The code was: 1 2 3 4")

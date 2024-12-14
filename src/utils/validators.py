@@ -71,7 +71,8 @@ class InputValidator:
                 error_code="NON_NUMERIC"
             )
 
-        if len(guess_input) != self.config.pattern_length:
+        num_count = len([c for c in guess_input if c.isdigit()])
+        if num_count != self.config.pattern_length:
             return ValidationResult(
                 is_valid=False,
                 message=f"Must enter exactly {self.config.pattern_length} numbers",
