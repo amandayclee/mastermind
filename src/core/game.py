@@ -3,6 +3,7 @@ import logging
 from typing import List, Optional, Tuple
 import uuid
 from src.core.config.game_config import GameConfig
+from src.services.exceptions.exceptions import GameInitError
 from src.services.generators.random_org import RandomOrgGenerator
 from src.repository.memory import InMemoryGameRepository
 from src.core.models.feedback import Feedback
@@ -70,18 +71,21 @@ class Game:
         Args:
             generator: Number generator to create secret code
         """
-        self.game_id = str(uuid.uuid4())
-        logger.info("Created new game with ID: %s", self.game_id)
-        
-        self.code_pattern = self.game_logic.generate_code_pattern(generator)
-        logger.debug("Generated code pattern: %s", self.code_pattern)
-        
-        self.pattern_count = self.game_logic.calculate_pattern_counts(self.code_pattern)
-        self.status = GameStatus.IN_PROGRESS
-        self.attempts = 0
-        self.guess_records = []
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        try:
+            self.game_id = str(uuid.uuid4())
+            logger.info("Created new game with ID: %s", self.game_id)
+            
+            self.code_pattern = self.game_logic.generate_code_pattern(generator)
+            logger.debug("Generated code pattern: %s", self.code_pattern)
+            
+            self.pattern_count = self.game_logic.calculate_pattern_counts(self.code_pattern)
+            self.status = GameStatus.IN_PROGRESS
+            self.attempts = 0
+            self.guess_records = []
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
+        except GameInitError:
+            raise
         
     def _save_current_state(self) -> None:
         """

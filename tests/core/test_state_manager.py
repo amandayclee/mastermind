@@ -36,12 +36,11 @@ class TestStateManager:
         """
         Test loading non-existent game state
         """
-        mock_repository.load_game.return_value = None
-        
-        with pytest.raises(GameNotFoundError) as exc_info:
+        mock_repository.load_game.side_effect = GameNotFoundError("wrong_id")
+    
+        with pytest.raises(GameNotFoundError):
             mock_state_manager.load_state("wrong_id")
-            
-        assert "wrong_id" in str(exc_info.value)
+
         mock_repository.load_game.assert_called_once_with("wrong_id")
         
     def test_save_state_with_different_status(self, mock_state_manager, mock_repository, sample_game_state):

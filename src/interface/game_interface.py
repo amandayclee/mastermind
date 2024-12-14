@@ -37,31 +37,24 @@ class GameInterface:
         """
         logger.info("Starting main menu")
         while True:
-            try: 
-                print("\n****** Mastermind ******")
-                print("1. New Game")
-                print("2. Load Game")
-                print("3. Exit Program")
-                choice = input("Select an option (1-3): ")
-                logger.debug("User selected menu option: %s", choice)
-                
-                if choice == "1":
-                    self._handle_new_game()
-                elif choice == "2":
-                    self._handle_load_game()
-                elif choice == "3":
-                    logger.info("User chose to exit program")
-                    print("Thanks for playing!")
-                    break
-                else:
-                    logger.warning("Invalid menu choice: %s", choice)
-                    print("Invalid choice. Please select 1, 2, or 3")
-            except Exception as e:
-                logger.error(f"Unexpected error in menu: {e}")
-                print("\nAn unexpected error occurred. Please try again.")
-                if input("Enter 'q' to quit, any other key to continue: ").lower() == 'q':
-                    print("Emergency exit triggered. Thanks for playing!")
-                    break
+            print("\n****** Mastermind ******")
+            print("1. New Game")
+            print("2. Load Game")
+            print("3. Exit Program")
+            choice = input("Select an option (1-3): ")
+            logger.debug("User selected menu option: %s", choice)
+            
+            if choice == "1":
+                self._handle_new_game()
+            elif choice == "2":
+                self._handle_load_game()
+            elif choice == "3":
+                logger.info("User chose to exit program")
+                print("Thanks for playing!")
+                break
+            else:
+                logger.warning("Invalid menu choice: %s", choice)
+                print("Invalid choice. Please select 1, 2, or 3")
                 
     def _handle_new_game(self) -> None:
         """

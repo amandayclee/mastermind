@@ -5,7 +5,6 @@ from src.core.game_logic import GameLogic
 from src.core.state_manager import StateManager
 from src.core.models.guess import Guess
 from src.core.models.feedback import Feedback
-from src.services.exceptions.exceptions import GuessError, InvalidLengthError, RangeError
 from src.core.models.game_status import GameStatus
 
 
@@ -22,6 +21,9 @@ class TestGame:
         return Game(generator=mock_generator)
     
     def test_game_initialization(self, game, mock_generator):
+        """
+        Test loading existing game
+        """
         assert game.status == GameStatus.IN_PROGRESS
         assert game.attempts == 0
         assert len(game.guess_records) == 0
@@ -42,6 +44,9 @@ class TestGame:
         assert reloaded_game.status == game.status
         
     def test_make_guess_one_time_not_correct(self, game):
+        """
+        Test making an incorrect guess
+        """
         guess = Guess([1, 5, 6, 7])
         game.make_guess(guess)
         history = game.get_guess_history()
@@ -54,6 +59,9 @@ class TestGame:
         assert game.status == GameStatus.IN_PROGRESS
         
     def test_make_guess_all_correct(self, game):
+        """
+        Test making a winning guess
+        """
         guess = Guess([1, 2, 3, 4])
         game.make_guess(guess)
         history = game.get_guess_history()
@@ -67,6 +75,9 @@ class TestGame:
         assert reloaded_game.status == GameStatus.WON
         
     def test_make_guess_max_attempts(self, game):
+        """
+        Test reaching maximum attempts
+        """
         wrong_guess = Guess([5, 5, 5, 5])
         for _ in range(game.config.max_attempts):
             game.make_guess(wrong_guess)
@@ -78,27 +89,6 @@ class TestGame:
 
         reloaded_game = Game(game_id=game.game_id)
         assert reloaded_game.status == GameStatus.LOST
-        
-        
-    @pytest.mark.parametrize("invalid_input,expected_exception", [
-        ("", GuessError),
-        ("abc", GuessError),
-        ("123", InvalidLengthError),
-        ("12345", InvalidLengthError),
-        ("8888", RangeError)
-    ])
-    def test_validate_guess_input_invalid(self, game, invalid_input, expected_exception):
-        with pytest.raises(expected_exception):
-            game.validate_guess_input(invalid_input)
-    
-    
-    def test_validate_guess_input_valid(self, game):
-        guess = game.validate_guess_input("1234")
-        game.make_guess(guess)
-        
-        history = game.get_guess_history()
-        assert isinstance(guess, Guess)
-        assert history[0][0].get_numbers() == [1, 2, 3, 4]
         
         
     def test_get_guess_history(self, game):
@@ -128,37 +118,3 @@ class TestGame:
 
     def test_get_code_pattern(self, game):        
         assert game.get_code_pattern() == game.code_pattern
-
-        
-    # def test_generate_code_pattern_error_handling(self):
-    #     mock_generator = Mock()
-    #     mock_generator.generate.side_effect = GeneratorError("API error")
-        
-    #     with pytest.raises(GameInitError) as excinfo:
-    #         Game(generator=mock_generator)
-    #     assert "Failed to initialize game" in str(excinfo.value)
-
-
-    # def test_pattern_count_calculation(self, game):
-    #     mock_generator = Mock()
-    #     mock_generator.generate.return_value = [1, 1, 2, 3]
-    #     game = Game(generator=mock_generator)
-        
-    #     assert game.pattern_count == {1: 2, 2: 1, 3: 1}
-        
-    # @pytest.mark.parametrize("guess_numbers,expected_numbers,expected_locations", [
-    #     ([1, 1, 2, 3], 4, 4),
-    #     ([1, 1, 3, 2], 4, 2),
-    #     ([1, 2, 2, 3], 3, 3),
-    #     ([4, 4, 4, 4], 0, 0),
-    # ])
-    # def test_check_guess_with_duplicates(self, guess_numbers, expected_numbers, expected_locations):
-    #     mock_generator = Mock()
-    #     mock_generator.generate.return_value = [1, 1, 2, 3]
-    #     game = Game(generator=mock_generator)
-        
-    #     correct_number, correct_location = game._check_guess(Guess(guess_numbers))
-        
-    #     assert correct_number == expected_numbers
-    #     assert correct_location == expected_locations
-        

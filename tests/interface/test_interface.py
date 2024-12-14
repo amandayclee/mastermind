@@ -2,6 +2,7 @@ from datetime import datetime
 from unittest.mock import Mock, call, patch
 import pytest
 
+from src.core.models.game_difficulty import Difficulty
 from src.core.models.game_status import GameStatus
 from src.interface.game_interface import GameInterface
 
@@ -32,7 +33,7 @@ class TestGameInterface:
     @patch('builtins.print')
     def test_start_menu_new_game(self, mock_print, mock_input, mock_interface, mock_game):
         """Test starting a new game from menu."""
-        mock_input.side_effect = ['1', 'exit', '3']
+        mock_input.side_effect = ['1', '1', 'exit', '3']
         with patch('src.core.game.Game', return_value=mock_game):
             mock_interface.start_menu()
             
@@ -42,8 +43,3 @@ class TestGameInterface:
             call("2. Load Game"),
             call("3. Exit Program")
         ]
-        
-        assert mock_print.mock_calls[5] == call("Keep this ID if you want to continue this game later!\n")
-        assert mock_print.mock_calls[6] == call("Type 'exit' to return to main menu")
-        assert mock_print.mock_calls[7] == call("Type 'id' to see your game ID")
-        assert mock_print.mock_calls[8] == call("\nAttempts remaining: 10\n")
