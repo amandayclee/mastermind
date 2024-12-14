@@ -19,6 +19,7 @@ class GameInterface:
         Args:
             game (Game): Reference to the current game instance being played
             repository (GameRepository): Repository for game state persistence
+            repository(InputValidator): Utility to validate user input
         """
         self.game = None
         self.repository = repository

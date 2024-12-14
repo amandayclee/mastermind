@@ -44,7 +44,7 @@ class GameLogic:
         
         try:
             code_pattern = generator.generate(self.config)
-            logger.info("Code pattern generated successfully with length %d", len(code_pattern))
+            logger.info("Code pattern generated successfully: %s", code_pattern)
             return code_pattern
         except GeneratorError as e:
             logger.error(f"Failed to generate code pattern: {e}")

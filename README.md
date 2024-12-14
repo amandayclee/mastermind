@@ -80,6 +80,8 @@ classDiagram
         -Dict~int,int~ pattern_count
         -GameStatus status
         -int attempts
+        -datetime created_at
+        -datetime datetime 
         -List~Tuple~Guess,Feedback~~ guess_records
         +initialize_new_game() void
         +make_guess(Guess) void
@@ -172,6 +174,11 @@ classDiagram
     }
 
     %% Services
+    class NumberGenerator {
+        <<interface>>
+        +generate(GameState) List~int~
+    }
+
     class RandomOrgGenerator {
         +str BASE_URL
         +int MAX_RETRIES
@@ -239,10 +246,11 @@ classDiagram
     Game --> GameLogic : validates guesses via
     Game --> GameConfig : configured by
     Game --> GameStatus : tracks status via
-    Game --> RandomOrgGenerator : gets numbers from
+    Game --> NumberGenerator : gets numbers from
     GameLogic --> GameConfig : uses
     StateManager --> GameRepository : persists via
     StateManager --> GameState : manages
+    NumberGenerator <|-- RandomOrgGenerator : implements
     GameRepository <|-- SQLiteGameRepository : implements
     GameRepository <|-- InMemoryGameRepository : implements
     InputValidator --> GameConfig : uses
