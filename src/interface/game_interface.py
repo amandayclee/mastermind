@@ -5,7 +5,7 @@ from src.repository.sqlite import SQLiteGameRepository
 from src.repository.base import GameRepository
 from src.core.models.game_status import GameStatus
 from src.core.game import Game
-from src.services.exceptions.exceptions import GameNotFoundError
+from src.services.exceptions.exceptions import GameInitError, GameNotFoundError
 from src.core.models.game_difficulty import Difficulty
 from src.utils.validators import InputValidator
 
@@ -60,15 +60,19 @@ class GameInterface:
         """
         Handle the creation of a new game.
         """
-        difficulty = self._select_difficulty()
-        config = GameConfig(difficulty=difficulty)
-        self.validator = InputValidator(config)
-        self.game = Game(repository=self.repository, config=config)
-        logger.info("New game created with ID: %s", self.game.game_id)
-        
-        print(f"\nYour game ID is: {self.game.game_id}")
-        print("Keep this ID if you want to continue this game later!\n")
-        self.run_game()        
+        try: 
+            difficulty = self._select_difficulty()
+            config = GameConfig(difficulty=difficulty)
+            self.validator = InputValidator(config)
+            self.game = Game(repository=self.repository, config=config)
+            logger.info("New game created with ID: %s", self.game.game_id)
+            
+            print(f"\nYour game ID is: {self.game.game_id}")
+            print("Keep this ID if you want to continue this game later!\n")
+            self.run_game()
+        except GameInitError:
+            logger.warning("Attempted to initialize a game but failed. Try again.")
+            return
         
     def _handle_load_game(self) -> None:
         """

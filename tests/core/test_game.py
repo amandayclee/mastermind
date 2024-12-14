@@ -6,6 +6,7 @@ from src.core.state_manager import StateManager
 from src.core.models.guess import Guess
 from src.core.models.feedback import Feedback
 from src.core.models.game_status import GameStatus
+from src.services.exceptions.exceptions import GameInitError, GeneratorError
 
 
 class TestGame:
@@ -31,6 +32,17 @@ class TestGame:
         assert isinstance(game.game_logic, GameLogic)
         assert isinstance(game.state_manager, StateManager)
         mock_generator.generate.assert_called_once()
+        
+    def test_initialize_game_generator_error(self, mock_repository):
+        """
+        Test game initialization fails when generator fails
+        """
+        mock_generator = Mock()
+        mock_generator.generate.side_effect = GeneratorError("API error")
+        
+        with pytest.raises(GameInitError) as exc_info:
+            Game(generator=mock_generator)
+        assert "Failed to initialize game" in str(exc_info.value)
         
     def test_load_game(self, game):
         guess = Guess([5, 5, 5, 5])
